@@ -1,0 +1,61 @@
+/* --- IMPORTA A FONTE DO GOOGLE --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* --- VARIÁVEIS GLOBAIS (CORES E ESTILOS) --- 
+  Usar variáveis torna mais fácil mudar as cores do site todo de uma só vez.
+*/
+:root {
+    --cor-principal: #1E293B;
+    --cor-principal-clara: #334155;
+    --cor-fundo-secao: #F1F5F9;
+    --cor-fundo-pagina: #FFFFFF;
+    --cor-texto-comum: #334155;
+    --cor-texto-discreto: #64748B;
+    --cor-texto-escuro: #0F172A;
+    --cor-borda: #E2E8F0;
+    
+    --cor-sucesso: #10B981;
+    --cor-sucesso-escura: #059669;
+    --cor-sucesso-clara: #ECFDF5;
+    --cor-aviso: #F59E0B;
+    --cor-aviso-clara: #FFFBEB;
+    --cor-erro: #EF4444;
+    --cor-info: #3B82F6;
+    --cor-info-clara: #EFF6FF;
+    --cor-amarelo: #FBBF24;
+
+    --fonte-padrao: 'Inter', sans-serif;
+    --borda-arredondada: 0.75rem;
+    --borda-arredondada-grande: 1rem;
+    --sombra-pequena: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --sombra-media: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+/* --- ESTILOS BASE PARA A PÁGINA --- */
+body {
+    margin: 0;
+    font-family: var(--fonte-padrao);
+    background-color: var(--cor-fundo-pagina);
+    color: var(--cor-texto-comum);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+h1, h2, h3, h4, p {
+  margin: 0;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
