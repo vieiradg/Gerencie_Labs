@@ -1,0 +1,126 @@
+
+.cartao-imovel {
+  background-color: white;
+  border-radius: var(--borda-arredondada-grande);
+  padding: 1.5rem;
+  box-shadow: var(--sombra-pequena);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.cartao-imovel:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--sombra-media);
+}
+.imovel-nome {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--cor-texto-escuro);
+  margin-bottom: 0.5rem;
+}
+.imovel-endereco {
+  color: var(--cor-texto-discreto);
+  margin-bottom: 1rem;
+}
+.imovel-status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.status-alugado {
+  background-color: var(--cor-sucesso-clara);
+  color: var(--cor-sucesso-escura);
+}
+.status-disponivel {
+  background-color: var(--cor-info-clara);
+  color: var(--cor-info);
+}
+
+
+.abas-navegacao {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid var(--cor-borda);
+  margin-bottom: 2rem;
+}
+.aba-item {
+  padding: 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--cor-texto-discreto);
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+}
+.aba-item.ativo {
+  color: var(--cor-principal);
+  border-bottom-color: var(--cor-principal);
+}
+.contrato-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: flex-start;
+}
+@media (min-width: 1024px) {
+  .contrato-layout {
+    grid-template-columns: 1fr 300px;
+  }
+}
+.texto-contrato {
+  background-color: white;
+  border-radius: var(--borda-arredondada-grande);
+  padding: 2rem;
+  box-shadow: var(--sombra-pequena);
+}
+.texto-contrato h3 {
+  margin-bottom: 1rem;
+}
+.texto-contrato h4 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.texto-contrato p,
+.texto-contrato li {
+  line-height: 1.6;
+}
+.resumo-contrato-container {
+  position: sticky;
+  top: 2rem;
+}
+.resumo-contrato-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+.resumo-contrato-item .icone {
+  color: var(--cor-texto-discreto);
+  flex-shrink: 0;
+}
+.resumo-contrato-item h4 {
+  font-size: 0.875rem;
+  color: var(--cor-texto-discreto);
+  margin-bottom: 0.25rem;
+}
+.resumo-contrato-item p {
+  font-weight: 500;
+  color: var(--cor-texto-escuro);
+}
+.assinatura-digital {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.assinatura-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+.botao-desabilitado {
+  background-color: var(--cor-borda);
+  color: var(--cor-texto-discreto);
+  cursor: not-allowed;
+}

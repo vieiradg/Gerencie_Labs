@@ -1,0 +1,31 @@
+.grid-cartoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.cartao-dashboard {
+  background-color: white;
+  border-radius: var(--borda-arredondada-grande);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--sombra-pequena);
+}
+.cartao-titulo {
+  color: var(--cor-texto-discreto);
+  margin-bottom: 0.5rem;
+}
+.cartao-valor {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--cor-texto-escuro);
+}
+.cartao-icone {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

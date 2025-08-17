@@ -1,0 +1,41 @@
+.tabela-container {
+  background-color: white;
+  border-radius: var(--borda-arredondada-grande);
+  padding: 1.5rem;
+  box-shadow: var(--sombra-pequena);
+  overflow-x: auto;
+}
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+}
+.tabela th,
+.tabela td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--cor-borda);
+  white-space: nowrap;
+}
+.tabela th {
+  color: var(--cor-texto-discreto);
+  font-size: 0.875rem;
+}
+.tabela tbody tr:hover {
+  background-color: var(--cor-fundo-secao);
+  cursor: pointer;
+}
+.status-pagamento {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.status-em-dia {
+  background-color: var(--cor-sucesso-clara);
+  color: var(--cor-sucesso-escura);
+}
+.status-atrasado {
+  background-color: var(--cor-aviso-clara);
+  color: var(--cor-aviso);
+}

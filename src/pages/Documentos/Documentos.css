@@ -1,0 +1,28 @@
+.lista-documentos {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.item-documento {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: white;
+  padding: 1rem;
+  border-radius: var(--borda-arredondada);
+  box-shadow: var(--sombra-pequena);
+}
+.documento-icone {
+  color: var(--cor-principal);
+}
+.documento-info {
+  flex-grow: 1;
+}
+.documento-nome {
+  font-weight: 500;
+  color: var(--cor-texto-escuro);
+}
+.documento-data {
+  font-size: 0.875rem;
+  color: var(--cor-texto-discreto);
+}

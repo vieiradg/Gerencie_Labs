@@ -1,0 +1,76 @@
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+}
+.menu-lateral {
+  width: 250px;
+  background-color: white;
+  border-right: 1px solid var(--cor-borda);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+}
+.menu-lateral-logo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2.5rem;
+}
+.menu-navegacao {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--borda-arredondada);
+  color: var(--cor-texto-discreto);
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: var(--fonte-padrao);
+  font-size: 1rem;
+}
+.menu-item:hover {
+  background-color: var(--cor-fundo-secao);
+  color: var(--cor-texto-escuro);
+}
+.menu-item.ativo {
+  background-color: var(--cor-principal);
+  color: white;
+}
+.menu-item.ativo .icone {
+  color: white;
+}
+.menu-lateral-rodape {
+  margin-top: auto;
+}
+.conteudo-principal {
+  flex: 1;
+  background-color: var(--cor-fundo-secao);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+.pagina-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.pagina-titulo {
+  font-size: 2rem;
+  color: var(--cor-texto-escuro);
+}
+.botao-adicionar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
