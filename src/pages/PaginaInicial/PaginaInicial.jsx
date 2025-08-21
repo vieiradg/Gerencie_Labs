@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './PaginaInicial.css';
-import { 
-    IconeCasa, IconeUsuarios, IconeMensagem, IconeTendencia, IconeEscudo, 
-    IconeRelogio, IconeCheck, IconeEstrela, IconeMenu, IconeFechar, IconeSetaDireita, 
-    IconeGrafico, IconeSino, IconeDocumento 
+import {
+    IconeCasa, IconeUsuarios, IconeMensagem, IconeTendencia, IconeEscudo,
+    IconeRelogio, IconeCheck, IconeEstrela, IconeMenu, IconeFechar, IconeSetaDireita,
+    IconeGrafico, IconeSino, IconeDocumento
 } from '../../components/Icons';
 
 export default function PaginaInicial({ onEntrarClick }) {
@@ -32,43 +32,47 @@ export default function PaginaInicial({ onEntrarClick }) {
     ];
 
     const planosPreco = [
-      {
-        nome: "Gratuito",
-        preco: "R$ 0",
-        descricao: "Perfeito para começar",
-        recursos: ["Até 3 imóveis", "Dashboard básico", "Suporte por email"],
-        textoBotao: "Começar Grátis",
-        popular: false,
-        botaoPrimario: false,
-      },
-      {
-        nome: "Profissional",
-        preco: "R$ 49",
-        descricao: "Para proprietários sérios",
-        recursos: ["Até 20 imóveis", "Dashboard completo", "Chat com inquilinos", "Relatórios avançados", "Suporte prioritário"],
-        textoBotao: "Começar Teste Grátis",
-        popular: true,
-        botaoPrimario: true,
-      },
-      {
-        nome: "Empresarial",
-        preco: "R$ 149",
-        descricao: "Para grandes portfólios",
-        recursos: ["Imóveis ilimitados", "API personalizada", "Integrações avançadas", "Gerente de conta", "Suporte 24/7"],
-        textoBotao: "Falar com Vendas",
-        popular: false,
-        botaoPrimario: false,
-      }
+        {
+            nome: "Gratuito",
+            preco: "R$ 0",
+            descricao: "Perfeito para começar",
+            recursos: ["Até 3 imóveis", "Dashboard básico", "Suporte por email"],
+            textoBotao: "Começar Grátis",
+            popular: false,
+            botaoPrimario: false,
+        },
+        {
+            nome: "Profissional",
+            preco: "R$ 49",
+            descricao: "Para proprietários sérios",
+            recursos: ["Até 20 imóveis", "Dashboard completo", "Chat com inquilinos", "Relatórios avançados", "Suporte prioritário"],
+            textoBotao: "Começar Teste Grátis",
+            popular: true,
+            botaoPrimario: true,
+        },
+        {
+            nome: "Empresarial",
+            preco: "R$ 149",
+            descricao: "Para grandes portfólios",
+            recursos: ["Imóveis ilimitados", "API personalizada", "Integrações avançadas", "Gerente de conta", "Suporte 24/7"],
+            textoBotao: "Falar com Vendas",
+            popular: false,
+            botaoPrimario: false,
+        }
     ];
 
     return (
         <div className="pagina-inicial">
             <header className="cabecalho">
                 <div className="container cabecalho-container">
-                    <div className="logo">
-                        <div className="logo-icone-fundo"> <IconeCasa className="icone-branco" /> </div>
+
+                    <a className="logo" href="#apresentacao">
+                        <div className="logo-icone-fundo">
+                            <IconeCasa className="icone-branco" />
+                        </div>
                         <span className="logo-nome">gerencie</span>
-                    </div>
+                    </a>
+
                     <nav className="menu-desktop">
                         <a href="#funcionalidades" className="menu-link">Funcionalidades</a>
                         <a href="#precos" className="menu-link">Preços</a>
@@ -93,7 +97,7 @@ export default function PaginaInicial({ onEntrarClick }) {
                 )}
             </header>
             <main>
-                <section className="secao-apresentacao">
+                <section id="apresentacao" className="secao-apresentacao">
                     <div className="container secao-apresentacao-container">
                         <div className="conteudo-apresentacao">
                             <span className="aviso-novo">✨ Novo: Dashboard com IA integrada</span>
@@ -124,7 +128,7 @@ export default function PaginaInicial({ onEntrarClick }) {
                 <section id="estatisticas" className="secao">
                     <div className="container">
                         <div className="grid-estatisticas">
-                            {estatisticas.map((item, index) => ( <div key={index} className="item-estatistica"> <div className="numero-estatistica">{item.numero}</div> <div className="rotulo-estatistica">{item.rotulo}</div> </div> ))}
+                            {estatisticas.map((item, index) => (<div key={index} className="item-estatistica"> <div className="numero-estatistica">{item.numero}</div> <div className="rotulo-estatistica">{item.rotulo}</div> </div>))}
                         </div>
                     </div>
                 </section>
@@ -135,7 +139,7 @@ export default function PaginaInicial({ onEntrarClick }) {
                             <p className="secao-subtitulo">Funcionalidades pensadas especificamente para proprietários que querem profissionalizar a gestão dos seus aluguéis.</p>
                         </div>
                         <div className="grid-funcionalidades">
-                            {funcionalidades.map((item, index) => ( <div key={index} className="cartao cartao-funcionalidade"> <div className="cartao-icone-fundo fundo-claro"> <item.icone className="icone-grande texto-escuro" /> </div> <h3 className="titulo-funcionalidade">{item.titulo}</h3> <p className="texto-discreto">{item.descricao}</p> </div> ))}
+                            {funcionalidades.map((item, index) => (<div key={index} className="cartao cartao-funcionalidade"> <div className="cartao-icone-fundo fundo-claro"> <item.icone className="icone-grande texto-escuro" /> </div> <h3 className="titulo-funcionalidade">{item.titulo}</h3> <p className="texto-discreto">{item.descricao}</p> </div>))}
                         </div>
                     </div>
                 </section>
@@ -146,7 +150,7 @@ export default function PaginaInicial({ onEntrarClick }) {
                             <p className="secao-subtitulo">Mais de 10.000 proprietários já confiam no Gerencie</p>
                         </div>
                         <div className="grid-depoimentos">
-                            {depoimentos.map((item, index) => ( <div key={index} className="cartao cartao-depoimento"> <div className="depoimento-estrelas"> {[...Array(item.estrelas)].map((_, i) => ( <IconeEstrela key={i} className="icone" /> ))} </div> <p className="depoimento-texto">"{item.texto}"</p> <div> <p className="depoimento-autor">{item.nome}</p> <p className="depoimento-cargo">{item.cargo}</p> </div> </div> ))}
+                            {depoimentos.map((item, index) => (<div key={index} className="cartao cartao-depoimento"> <div className="depoimento-estrelas"> {[...Array(item.estrelas)].map((_, i) => (<IconeEstrela key={i} className="icone" />))} </div> <p className="depoimento-texto">"{item.texto}"</p> <div> <p className="depoimento-autor">{item.nome}</p> <p className="depoimento-cargo">{item.cargo}</p> </div> </div>))}
                         </div>
                     </div>
                 </section>
@@ -157,7 +161,7 @@ export default function PaginaInicial({ onEntrarClick }) {
                             <p className="secao-subtitulo">Comece grátis e escale conforme seu portfólio cresce</p>
                         </div>
                         <div className="grid-precos">
-                            {planosPreco.map((plano, index) => ( <div key={index} className={`cartao cartao-preco ${plano.popular ? 'popular' : ''}`}> {plano.popular && <div className="aviso-popular">Mais Popular</div>} <h3 className="preco-titulo">{plano.nome}</h3> <p className="preco-valor">{plano.preco}<span>/mês</span></p> <p className="preco-descricao">{plano.descricao}</p> <ul className="preco-lista-recursos"> {plano.recursos.map((recurso, i) => ( <li key={i} className="preco-item-recurso"> <IconeCheck className="icone" /> <span>{recurso}</span> </li> ))} </ul> <button className={`botao ${plano.botaoPrimario ? 'botao-principal' : 'botao-contorno'} botao-cheio botao-final-cartao`}> {plano.textoBotao} </button> </div> ))}
+                            {planosPreco.map((plano, index) => (<div key={index} className={`cartao cartao-preco ${plano.popular ? 'popular' : ''}`}> {plano.popular && <div className="aviso-popular">Mais Popular</div>} <h3 className="preco-titulo">{plano.nome}</h3> <p className="preco-valor">{plano.preco}<span>/mês</span></p> <p className="preco-descricao">{plano.descricao}</p> <ul className="preco-lista-recursos"> {plano.recursos.map((recurso, i) => (<li key={i} className="preco-item-recurso"> <IconeCheck className="icone" /> <span>{recurso}</span> </li>))} </ul> <button className={`botao ${plano.botaoPrimario ? 'botao-principal' : 'botao-contorno'} botao-cheio botao-final-cartao`}> {plano.textoBotao} </button> </div>))}
                         </div>
                     </div>
                 </section>

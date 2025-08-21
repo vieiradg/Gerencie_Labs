@@ -91,7 +91,7 @@
 }
 .botao-principal {
   background-color: var(--cor-principal);
-  color: black;
+  color: #ffffff;
 }
 .botao-principal:hover {
   background-color: var(--cor-principal-clara);
