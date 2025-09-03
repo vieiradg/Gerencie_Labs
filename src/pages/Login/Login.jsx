@@ -11,26 +11,42 @@ const FormularioLogin = ({ onLoginSucesso, setView }) => {
     const [lembrar, setLembrar] = useState(false);
     const [erro, setErro] = useState('');
     const [mostrarSenha, setMostrarSenha] = useState(false);
+    const [mensagemErro, setMensagemErro] = useState("");
 
-    const handleSubmit = (evento) => {
-        evento.preventDefault();
-        if (email === 'admin@gerencie.com' && senha === '1234') {
-            setErro('');
-            console.log(`Lembrar de mim: ${lembrar}`); // Simula o envio da opção "Lembrar de mim"
-            onLoginSucesso();
-        } else {
-            setErro('Email ou senha inválidos.');
+    const fazerLogin = async (e) => {
+        e.preventDefault();
+
+        try {
+            const resposta = await api.post("/user/login", {
+                email: email,
+                password: senha,
+            });
+
+            const token = resposta.data.token;
+            localStorage.setItem("$token", token);
+
+            if (resposta.status === 200) {
+
+
+                alert("Login realizado com sucesso!");
+                onLoginSucesso();
+            }
+        } catch (error) {
+            console.log(error.response?.data);
+            setMensagemErro(error.response?.data?.message || "Erro ao cadastrar usuário");
         }
     };
 
     return (
         <>
             <h2 className="login-titulo">Acesse sua conta</h2>
-            <form onSubmit={handleSubmit} className="login-formulario">
+            <form onSubmit={fazerLogin} className="login-formulario">
+
                 <div className="campo-grupo">
                     <label htmlFor="email">Email</label>
                     <input type="email" id="email" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
+
                 <div className="campo-grupo">
                     <label htmlFor="senha">Senha</label>
                     <div className="campo-senha-container">
@@ -40,6 +56,7 @@ const FormularioLogin = ({ onLoginSucesso, setView }) => {
                         </button>
                     </div>
                 </div>
+
                 <div className="login-opcoes">
                     <label className="lembrar-grupo">
                         <input type="checkbox" id="lembrar" checked={lembrar} onChange={(e) => setLembrar(e.target.checked)} />
@@ -47,9 +64,12 @@ const FormularioLogin = ({ onLoginSucesso, setView }) => {
                     </label>
                     <a href="#" onClick={(e) => { e.preventDefault(); setView('recuperar'); }}>Esqueci a senha</a>
                 </div>
+
                 {erro && <p className="mensagem-erro">{erro}</p>}
+
                 <button type="submit" className="botao botao-principal botao-cheio">Entrar</button>
             </form>
+            {mensagemErro && <p className="mensagem-erro">{mensagemErro}</p>}
             <p className="criar-conta-link">
                 Não tem uma conta? <a href="#" onClick={(e) => { e.preventDefault(); setView('criar'); }}>Crie agora</a>
             </p>
