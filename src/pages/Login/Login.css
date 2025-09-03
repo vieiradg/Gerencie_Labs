@@ -28,9 +28,12 @@
 .login-formulario {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
   text-align: left;
 }
+.campo-grupo {
+}
+
 .campo-grupo label {
   display: block;
   margin-bottom: 0.5rem;
@@ -59,6 +62,7 @@
   border: none;
   cursor: pointer;
   padding: 0.5rem;
+  color: var(--cor-texto-discreto);
 }
 .login-opcoes {
   display: flex;
@@ -70,13 +74,16 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  cursor: pointer;
 }
 .lembrar-grupo label {
   margin-bottom: 0;
+  cursor: pointer;
 }
 .login-opcoes a {
   color: var(--cor-principal);
   text-decoration: none;
+  font-weight: 500;
 }
 .login-opcoes a:hover {
   text-decoration: underline;
@@ -96,6 +103,12 @@
 }
 .mensagem-erro {
   color: var(--cor-erro);
-  text-align: center;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
+  text-align: left;
+  margin-top: 0.25rem;
+}
+.texto-recuperacao {
+    color: var(--cor-texto-discreto);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
 }
