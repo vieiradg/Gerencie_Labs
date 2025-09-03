@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { IconeCasa, IconeOlho, IconeOlhoFechado } from '../../components/Icons';
+import api from "../../services/Api";
+import { set, z } from "zod"
 
 
 const FormularioLogin = ({ onLoginSucesso, setView }) => {
@@ -57,90 +59,104 @@ const FormularioLogin = ({ onLoginSucesso, setView }) => {
 
 
 const FormularioCriarConta = ({ setView }) => {
+    // Use states de cadastro
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
+    const [cpf, setCpf] = useState('');
     const [senha, setSenha] = useState('');
     const [confirmarSenha, setConfirmarSenha] = useState('');
-    
-    const [erroNome, setErroNome] = useState('');
-    const [erroEmail, setErroEmail] = useState('');
-    const [erroSenha, setErroSenha] = useState('');
-    const [erroConfirmarSenha, setErroConfirmarSenha] = useState('');
 
+    // Erros
     const [mostrarSenha, setMostrarSenha] = useState(false);
+
     const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
+    const [erroConfirmarSenha, setErroConfirmarSenha] = useState('');
+    const [mensagemErro, setMensagemErro] = useState("");
+    const [erros, setErros] = useState({});
 
-    const validarEmail = (email) => {
-        const re = /\S+@\S+\.\S+/;
-        return re.test(email);
-    };
 
-    const validarSenha = (senha) => {
-        const re = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-        return re.test(senha);
-    };
+    const schema = z.object({
+        nome: z.string().min(1, "Nome é obrigatório"),
+        email: z.string().email("Email inválido"),
+        senha: z.string().min(6, "Senha deve ter no mínimo 6 caracteres"),
+        cpf: z
+            .string()
+            .min(11, "CPF deve ter 11 dígitos")
+            .max(11, "CPF deve ter 11 dígitos")
+            .regex(/^\d+$/, "CPF só pode conter números"),
+    });
 
-    const handleSubmit = (e) => {
+    const cadastrarUsuario = async (e) => {
         e.preventDefault();
-        
-        setErroNome('');
-        setErroEmail('');
-        setErroSenha('');
-        setErroConfirmarSenha('');
 
-        let formValido = true;
+        const formData = {
+            nome,
+            email,
+            senha,
+            cpf
+        };
 
-        if (!nome.trim()) {
-            setErroNome('O nome é obrigatório.');
-            formValido = false;
-        }
+        const result = schema.safeParse(formData);
 
-        if (!email) {
-            setErroEmail('O email é obrigatório.');
-            formValido = false;
-        } else if (!validarEmail(email)) {
-            setErroEmail('Por favor, insira um email válido.');
-            formValido = false;
-        }
-
-        if (!senha) {
-            setErroSenha('A senha é obrigatória.');
-            formValido = false;
-        } else if (!validarSenha(senha)) {
-            setErroSenha('A senha deve ter no mínimo 8 caracteres, uma letra maiúscula e um número.');
-            formValido = false;
-        }
-
-        if (!confirmarSenha) {
-            setErroConfirmarSenha('A confirmação da senha é obrigatória.');
-            formValido = false;
-        } else if (senha !== confirmarSenha) {
-            setErroConfirmarSenha('As senhas não coincidem.');
-            formValido = false;
-        }
-
-        if (!formValido) {
+        if (!result.success) {
+            const fieldErrors = result.error.format();
+            const novosErros = {
+                nome: fieldErrors.nome?._errors?.[0] || "",
+                email: fieldErrors.email?._errors?.[0] || "",
+                senha: fieldErrors.senha?._errors?.[0] || "",
+                cpf: fieldErrors.cpf?._errors?.[0] || "",
+            };
+            setErros(novosErros);
             return;
+        } else {
+            setErros({});
         }
 
-        alert("Conta criada com sucesso! (Simulação)");
-        setView('login');
+        const usuario = {
+            name: nome,
+            email,
+            password: senha,
+            cpf: cpf
+        }
+
+        try {
+            const resposta = await api.post("/user/register", usuario, {});
+
+            if (resposta.status === 201) {
+                alert(`Parabéns ${nome} foi cadastrado com sucesso!`);
+                setView('login');
+            }
+        } catch (error) {
+            console.log(error.response?.data);
+            setMensagemErro(error.response?.data?.message || "Erro ao cadastrar usuário");
+
+        }
     };
+
 
     return (
         <>
             <h2 className="login-titulo">Crie sua conta</h2>
-            <form onSubmit={handleSubmit} className="login-formulario" noValidate>
+            <form onSubmit={cadastrarUsuario} className="login-formulario" noValidate>
+
                 <div className="campo-grupo">
                     <label htmlFor="nome">Nome completo</label>
                     <input type="text" id="nome" placeholder="Seu nome completo" value={nome} onChange={(e) => setNome(e.target.value)} />
-                    {erroNome && <p className="mensagem-erro">{erroNome}</p>}
+                    {erros.nome && <p className="mensagem-erro">{erros.nome}</p>}
                 </div>
+
                 <div className="campo-grupo">
                     <label htmlFor="email-criar">Email</label>
                     <input type="email" id="email-criar" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-                    {erroEmail && <p className="mensagem-erro">{erroEmail}</p>}
+                    {erros.email && <p className="mensagem-erro">{erros.email}</p>}
                 </div>
+
+                <div className="campo-grupo">
+                    <label htmlFor="cpf-criar">Cpf</label>
+                    <input type="text" id="cpf-criar" placeholder="00000000000" value={cpf} onChange={(e) => setCpf(e.target.value)} />
+                    {erros.cpf && <p className="mensagem-erro">{erros.cpf}</p>}
+                </div>
+
                 <div className="campo-grupo">
                     <label htmlFor="senha-criar">Senha</label>
                     <div className="campo-senha-container">
@@ -149,9 +165,10 @@ const FormularioCriarConta = ({ setView }) => {
                             {mostrarSenha ? <IconeOlhoFechado className="icone" /> : <IconeOlho className="icone" />}
                         </button>
                     </div>
-                    {erroSenha && <p className="mensagem-erro">{erroSenha}</p>}
+                    {erros.senha && <p className="mensagem-erro">{erros.senha}</p>}
                 </div>
-                <div className="campo-grupo">
+
+                {/* <div className="campo-grupo">
                     <label htmlFor="senha-confirmar">Confirmar Senha</label>
                     <div className="campo-senha-container">
                         <input type={mostrarConfirmarSenha ? 'text' : 'password'} id="senha-confirmar" placeholder="Repita a senha" value={confirmarSenha} onChange={(e) => setConfirmarSenha(e.target.value)} />
@@ -160,9 +177,14 @@ const FormularioCriarConta = ({ setView }) => {
                         </button>
                     </div>
                     {erroConfirmarSenha && <p className="mensagem-erro">{erroConfirmarSenha}</p>}
-                </div>
+                    {erros.ConfirmarSenha && <p className="mensagem-erro">{erros.nome}</p>}
+                </div> */}
+
                 <button type="submit" className="botao botao-principal botao-cheio">Criar Conta</button>
             </form>
+
+            {mensagemErro && <p className="mensagem-erro">{mensagemErro}</p>}
+
             <p className="criar-conta-link">
                 Já tem uma conta? <a href="#" onClick={(e) => { e.preventDefault(); setView('login'); }}>Faça login</a>
             </p>
@@ -172,7 +194,7 @@ const FormularioCriarConta = ({ setView }) => {
 
 
 const FormularioRecuperarSenha = ({ setView }) => {
-    
+
     const handleSubmit = (e) => {
         e.preventDefault();
         alert("Email de recuperação enviado! (Simulação)");
