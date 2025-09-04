@@ -1,76 +1,119 @@
 .layout-container {
-  display: flex;
-  min-height: 100vh;
+    display: flex;
+    min-height: 100vh;
 }
-.menu-lateral {
-  width: 250px;
-  background-color: white;
-  border-right: 1px solid var(--cor-borda);
-  display: flex;
-  flex-direction: column;
-  padding: 1.5rem;
-}
-.menu-lateral-logo {
-  display: flex;
-  align-items: center;
-  margin-bottom: 2.5rem;
-}
-.menu-navegacao {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.menu-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  border-radius: var(--borda-arredondada);
-  color: var(--cor-texto-discreto);
-  font-weight: 500;
-  text-decoration: none;
-  transition: background-color 0.2s, color 0.2s;
-  cursor: pointer;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  font-family: var(--fonte-padrao);
-  font-size: 1rem;
-}
-.menu-item:hover {
-  background-color: var(--cor-fundo-secao);
-  color: var(--cor-texto-escuro);
-}
-.menu-item.ativo {
-  background-color: var(--cor-principal);
-  color: white;
-}
-.menu-item.ativo .icone {
-  color: white;
-}
-.menu-lateral-rodape {
-  margin-top: auto;
-}
+
 .conteudo-principal {
-  flex: 1;
-  background-color: var(--cor-fundo-secao);
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
+    flex: 1;
+    background-color: var(--cor-fundo-secao);
+    padding: 2rem;
+    transition: padding-left 0.3s ease-in-out;
+    position: relative; 
 }
+
+.menu-lateral {
+    width: 250px;
+    background-color: white;
+    border-right: 1px solid var(--cor-borda);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    transition: width 0.3s ease-in-out, padding 0.3s ease-in-out;
+    overflow: hidden; 
+}
+
+.menu-lateral-logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    flex-shrink: 0;
+}
+
+.menu-navegacao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--borda-arredondada);
+    color: var(--cor-texto-discreto);
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+    white-space: nowrap; 
+}
+
+.menu-item:hover {
+    background-color: var(--cor-fundo-secao);
+    color: var(--cor-texto-escuro);
+}
+
+.menu-item.active {
+    background-color: var(--cor-principal);
+    color: white;
+}
+
+.menu-item.active .icone {
+    color: white;
+}
+
+.menu-lateral-rodape {
+    margin-top: auto;
+    flex-shrink: 0;
+}
+
+.botao-toggle-menu {
+    position: absolute;
+    top: 1.25rem;
+    left: 1.5rem;
+    z-index: 100;
+    background-color: white;
+    border-radius: 50%;
+    border: 1px solid var(--cor-borda);
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--sombra-pequena);
+    transition: transform 0.3s ease-in-out;
+}
+
+.botao-toggle-menu:hover {
+    transform: scale(1.1);
+}
+
+.layout-container.menu-fechado .menu-lateral {
+    width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    border-right: none;
+}
+
+.layout-container.menu-fechado .conteudo-principal {
+    padding-left: 5rem;
+}
+
 .pagina-cabecalho {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
 }
+
 .pagina-titulo {
-  font-size: 2rem;
-  color: var(--cor-texto-escuro);
+    font-size: 2rem;
+    color: var(--cor-texto-escuro);
 }
+    
 .botao-adicionar {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }

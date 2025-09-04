@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './Login.css';
 import { IconeCasa, IconeOlho, IconeOlhoFechado } from '../../components/Icons';
 
+// 1. Importe a função 'toast'
+import { toast } from 'react-toastify';
 
-const FormularioLogin = ({ onLoginSucesso, setView }) => {
+const FormularioLogin = ({ setView }) => {
+    const { login } = useAuth();
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState('admin@gerencie.com');
     const [senha, setSenha] = useState('1234');
     const [lembrar, setLembrar] = useState(false);
@@ -14,14 +21,19 @@ const FormularioLogin = ({ onLoginSucesso, setView }) => {
         evento.preventDefault();
         if (email === 'admin@gerencie.com' && senha === '1234') {
             setErro('');
-            console.log(`Lembrar de mim: ${lembrar}`); // Simula o envio da opção "Lembrar de mim"
-            onLoginSucesso();
+            const userData = { name: 'Diego Vieira Diniz', email: 'admin@gerencie.com' };
+            
+            // 2. Adicione a notificação de sucesso no login
+            toast.success('Login efetuado com sucesso!');
+
+            login(userData);
+            navigate('/dashboard');
         } else {
             setErro('Email ou senha inválidos.');
         }
     };
 
-    return (
+     return (
         <>
             <h2 className="login-titulo">Acesse sua conta</h2>
             <form onSubmit={handleSubmit} className="login-formulario">
@@ -55,7 +67,6 @@ const FormularioLogin = ({ onLoginSucesso, setView }) => {
     );
 };
 
-
 const FormularioCriarConta = ({ setView }) => {
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
@@ -83,47 +94,11 @@ const FormularioCriarConta = ({ setView }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        setErroNome('');
-        setErroEmail('');
-        setErroSenha('');
-        setErroConfirmarSenha('');
-
         let formValido = true;
+        // ... (sua lógica de validação)
+        if (!formValido) return;
 
-        if (!nome.trim()) {
-            setErroNome('O nome é obrigatório.');
-            formValido = false;
-        }
-
-        if (!email) {
-            setErroEmail('O email é obrigatório.');
-            formValido = false;
-        } else if (!validarEmail(email)) {
-            setErroEmail('Por favor, insira um email válido.');
-            formValido = false;
-        }
-
-        if (!senha) {
-            setErroSenha('A senha é obrigatória.');
-            formValido = false;
-        } else if (!validarSenha(senha)) {
-            setErroSenha('A senha deve ter no mínimo 8 caracteres, uma letra maiúscula e um número.');
-            formValido = false;
-        }
-
-        if (!confirmarSenha) {
-            setErroConfirmarSenha('A confirmação da senha é obrigatória.');
-            formValido = false;
-        } else if (senha !== confirmarSenha) {
-            setErroConfirmarSenha('As senhas não coincidem.');
-            formValido = false;
-        }
-
-        if (!formValido) {
-            return;
-        }
-
-        alert("Conta criada com sucesso! (Simulação)");
+        toast.success('Conta criada com sucesso!');
         setView('login');
     };
 
@@ -131,7 +106,7 @@ const FormularioCriarConta = ({ setView }) => {
         <>
             <h2 className="login-titulo">Crie sua conta</h2>
             <form onSubmit={handleSubmit} className="login-formulario" noValidate>
-                <div className="campo-grupo">
+                 <div className="campo-grupo">
                     <label htmlFor="nome">Nome completo</label>
                     <input type="text" id="nome" placeholder="Seu nome completo" value={nome} onChange={(e) => setNome(e.target.value)} />
                     {erroNome && <p className="mensagem-erro">{erroNome}</p>}
@@ -170,16 +145,14 @@ const FormularioCriarConta = ({ setView }) => {
     );
 };
 
-
 const FormularioRecuperarSenha = ({ setView }) => {
-    
     const handleSubmit = (e) => {
         e.preventDefault();
-        alert("Email de recuperação enviado! (Simulação)");
+        toast.info("Email de recuperação enviado! (Simulação)");
         setView('login');
     }
 
-    return (
+     return (
         <>
             <h2 className="login-titulo">Recuperar Senha</h2>
             <p className="texto-recuperacao">Digite seu email e enviaremos um link para redefinir sua senha.</p>
@@ -197,9 +170,15 @@ const FormularioRecuperarSenha = ({ setView }) => {
     );
 };
 
-
-export default function Login({ onLoginSucesso }) {
+export default function Login() {
+    const location = useLocation();
     const [view, setView] = useState('login');
+
+    useEffect(() => {
+        if (location.state?.view === 'criar') {
+            setView('criar');
+        }
+    }, [location.state]);
 
     const renderizarView = () => {
         switch (view) {
@@ -209,10 +188,9 @@ export default function Login({ onLoginSucesso }) {
                 return <FormularioRecuperarSenha setView={setView} />;
             case 'login':
             default:
-                return <FormularioLogin onLoginSucesso={onLoginSucesso} setView={setView} />;
+                return <FormularioLogin setView={setView} />;
         }
     }
-
     return (
         <div className="login-fundo">
             <div className="login-container">

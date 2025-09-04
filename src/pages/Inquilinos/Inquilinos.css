@@ -1,41 +1,115 @@
 .tabela-container {
-  background-color: white;
-  border-radius: var(--borda-arredondada-grande);
-  padding: 1.5rem;
-  box-shadow: var(--sombra-pequena);
-  overflow-x: auto;
+    background-color: white;
+    border-radius: var(--borda-arredondada-grande);
+    box-shadow: var(--sombra-pequena);
+    overflow: hidden; /* Garante que as bordas arredondadas funcionem na tabela */
 }
+
 .tabela {
-  width: 100%;
-  border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
 }
+
 .tabela th,
 .tabela td {
-  padding: 1rem;
-  text-align: left;
-  border-bottom: 1px solid var(--cor-borda);
-  white-space: nowrap;
+    padding: 1rem 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--cor-borda);
 }
+
 .tabela th {
-  color: var(--cor-texto-discreto);
-  font-size: 0.875rem;
+    background-color: var(--cor-fundo-secao);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--cor-texto-discreto);
+    font-weight: 600;
 }
+
+.tabela tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tabela tbody tr {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
 .tabela tbody tr:hover {
-  background-color: var(--cor-fundo-secao);
-  cursor: pointer;
+    background-color: var(--cor-fundo-secao);
 }
+
 .status-pagamento {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-block;
 }
+
 .status-em-dia {
-  background-color: var(--cor-sucesso-clara);
-  color: var(--cor-sucesso-escura);
+    background-color: var(--cor-sucesso-clara);
+    color: var(--cor-sucesso-escura);
 }
+
 .status-atrasado {
-  background-color: var(--cor-aviso-clara);
-  color: var(--cor-aviso);
+    background-color: var(--cor-aviso-clara);
+    color: #92400E; /* amber-800 */
+}
+
+
+.fundo-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-conteudo {
+    background-color: white;
+    padding: 2rem;
+    border-radius: var(--borda-arredondada-grande);
+    box-shadow: var(--sombra-media);
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+}
+
+.modal-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-titulo {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--cor-texto-escuro);
+}
+
+.botao-fechar-modal {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: var(--cor-texto-discreto);
+}
+
+.formulario-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.modal-rodape {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 2rem;
 }
