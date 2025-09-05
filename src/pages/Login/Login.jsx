@@ -1,20 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './Login.css';
 import { IconeCasa, IconeOlho, IconeOlhoFechado } from '../../components/Icons';
 import api from "../../services/Api";
-import { set, z } from "zod"
+import { z } from "zod"
+import { toast } from 'react-toastify';
 
+const FormularioLogin = ({ setView }) => {
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
-const FormularioLogin = ({ onLoginSucesso, setView }) => {
     const [email, setEmail] = useState('admin@gerencie.com');
     const [senha, setSenha] = useState('1234');
     const [lembrar, setLembrar] = useState(false);
     const [erro, setErro] = useState('');
     const [mostrarSenha, setMostrarSenha] = useState(false);
-    const [mensagemErro, setMensagemErro] = useState("");
+
 
     const fazerLogin = async (e) => {
         e.preventDefault();
+        setErro(''); 
 
         try {
             const resposta = await api.post("/user/login", {
@@ -22,31 +28,36 @@ const FormularioLogin = ({ onLoginSucesso, setView }) => {
                 password: senha,
             });
 
-            const token = resposta.data.token;
+            const { token, user } = resposta.data;
+            
+
             localStorage.setItem("$token", token);
 
-            if (resposta.status === 200) {
 
+            toast.success("Login realizado com sucesso!");
+            
 
-                alert("Login realizado com sucesso!");
-                onLoginSucesso();
-            }
+            login(user); 
+            navigate('/dashboard');
+
         } catch (error) {
+            const mensagem = error.response?.data?.message || "Email ou senha inválidos.";
             console.log(error.response?.data);
-            setMensagemErro(error.response?.data?.message || "Erro ao cadastrar usuário");
+            setErro(mensagem);
+
+            toast.error(mensagem);
         }
     };
 
     return (
         <>
             <h2 className="login-titulo">Acesse sua conta</h2>
+       
             <form onSubmit={fazerLogin} className="login-formulario">
-
                 <div className="campo-grupo">
                     <label htmlFor="email">Email</label>
                     <input type="email" id="email" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
-
                 <div className="campo-grupo">
                     <label htmlFor="senha">Senha</label>
                     <div className="campo-senha-container">
@@ -56,7 +67,6 @@ const FormularioLogin = ({ onLoginSucesso, setView }) => {
                         </button>
                     </div>
                 </div>
-
                 <div className="login-opcoes">
                     <label className="lembrar-grupo">
                         <input type="checkbox" id="lembrar" checked={lembrar} onChange={(e) => setLembrar(e.target.checked)} />
@@ -64,12 +74,9 @@ const FormularioLogin = ({ onLoginSucesso, setView }) => {
                     </label>
                     <a href="#" onClick={(e) => { e.preventDefault(); setView('recuperar'); }}>Esqueci a senha</a>
                 </div>
-
                 {erro && <p className="mensagem-erro">{erro}</p>}
-
                 <button type="submit" className="botao botao-principal botao-cheio">Entrar</button>
             </form>
-            {mensagemErro && <p className="mensagem-erro">{mensagemErro}</p>}
             <p className="criar-conta-link">
                 Não tem uma conta? <a href="#" onClick={(e) => { e.preventDefault(); setView('criar'); }}>Crie agora</a>
             </p>
@@ -77,59 +84,34 @@ const FormularioLogin = ({ onLoginSucesso, setView }) => {
     );
 };
 
-
 const FormularioCriarConta = ({ setView }) => {
-    // Use states de cadastro
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
     const [cpf, setCpf] = useState('');
     const [senha, setSenha] = useState('');
-    const [confirmarSenha, setConfirmarSenha] = useState('');
-
-    // Erros
     const [mostrarSenha, setMostrarSenha] = useState(false);
-
-    const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
-    const [erroConfirmarSenha, setErroConfirmarSenha] = useState('');
-    const [mensagemErro, setMensagemErro] = useState("");
     const [erros, setErros] = useState({});
-
 
     const schema = z.object({
         nome: z.string().min(1, "Nome é obrigatório"),
         email: z.string().email("Email inválido"),
         senha: z.string().min(6, "Senha deve ter no mínimo 6 caracteres"),
-        cpf: z
-            .string()
-            .min(11, "CPF deve ter 11 dígitos")
-            .max(11, "CPF deve ter 11 dígitos")
-            .regex(/^\d+$/, "CPF só pode conter números"),
+        cpf: z.string().length(11, "CPF deve ter 11 dígitos").regex(/^\d+$/, "CPF só pode conter números"),
     });
+
 
     const cadastrarUsuario = async (e) => {
         e.preventDefault();
-
-        const formData = {
-            nome,
-            email,
-            senha,
-            cpf
-        };
-
+        setErros({});
+      
+        const formData = { nome, email, senha, cpf };
         const result = schema.safeParse(formData);
 
         if (!result.success) {
-            const fieldErrors = result.error.format();
-            const novosErros = {
-                nome: fieldErrors.nome?._errors?.[0] || "",
-                email: fieldErrors.email?._errors?.[0] || "",
-                senha: fieldErrors.senha?._errors?.[0] || "",
-                cpf: fieldErrors.cpf?._errors?.[0] || "",
-            };
-            setErros(novosErros);
+            const fieldErrors = result.error.flatten().fieldErrors;
+            setErros(fieldErrors);
+            toast.warn("Por favor, corrija os erros no formulário.");
             return;
-        } else {
-            setErros({});
         }
 
         const usuario = {
@@ -140,43 +122,41 @@ const FormularioCriarConta = ({ setView }) => {
         }
 
         try {
-            const resposta = await api.post("/user/register", usuario, {});
-
+            const resposta = await api.post("/user/register", usuario);
             if (resposta.status === 201) {
-                alert(`Parabéns ${nome} foi cadastrado com sucesso!`);
+         
+                toast.success(`Parabéns ${nome}, sua conta foi criada com sucesso!`);
                 setView('login');
             }
         } catch (error) {
+            const mensagem = error.response?.data?.message || "Erro ao cadastrar usuário. Tente novamente.";
             console.log(error.response?.data);
-            setMensagemErro(error.response?.data?.message || "Erro ao cadastrar usuário");
+            setErros({ api: mensagem });
 
+            toast.error(mensagem);
         }
     };
-
 
     return (
         <>
             <h2 className="login-titulo">Crie sua conta</h2>
-            <form onSubmit={cadastrarUsuario} className="login-formulario" noValidate>
 
+            <form onSubmit={cadastrarUsuario} className="login-formulario" noValidate>
                 <div className="campo-grupo">
                     <label htmlFor="nome">Nome completo</label>
                     <input type="text" id="nome" placeholder="Seu nome completo" value={nome} onChange={(e) => setNome(e.target.value)} />
                     {erros.nome && <p className="mensagem-erro">{erros.nome}</p>}
                 </div>
-
                 <div className="campo-grupo">
                     <label htmlFor="email-criar">Email</label>
                     <input type="email" id="email-criar" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
                     {erros.email && <p className="mensagem-erro">{erros.email}</p>}
                 </div>
-
                 <div className="campo-grupo">
-                    <label htmlFor="cpf-criar">Cpf</label>
+                    <label htmlFor="cpf-criar">CPF</label>
                     <input type="text" id="cpf-criar" placeholder="00000000000" value={cpf} onChange={(e) => setCpf(e.target.value)} />
                     {erros.cpf && <p className="mensagem-erro">{erros.cpf}</p>}
                 </div>
-
                 <div className="campo-grupo">
                     <label htmlFor="senha-criar">Senha</label>
                     <div className="campo-senha-container">
@@ -187,24 +167,9 @@ const FormularioCriarConta = ({ setView }) => {
                     </div>
                     {erros.senha && <p className="mensagem-erro">{erros.senha}</p>}
                 </div>
-
-                {/* <div className="campo-grupo">
-                    <label htmlFor="senha-confirmar">Confirmar Senha</label>
-                    <div className="campo-senha-container">
-                        <input type={mostrarConfirmarSenha ? 'text' : 'password'} id="senha-confirmar" placeholder="Repita a senha" value={confirmarSenha} onChange={(e) => setConfirmarSenha(e.target.value)} />
-                        <button type="button" className="botao-olho" onClick={() => setMostrarConfirmarSenha(!mostrarConfirmarSenha)}>
-                            {mostrarConfirmarSenha ? <IconeOlhoFechado className="icone" /> : <IconeOlho className="icone" />}
-                        </button>
-                    </div>
-                    {erroConfirmarSenha && <p className="mensagem-erro">{erroConfirmarSenha}</p>}
-                    {erros.ConfirmarSenha && <p className="mensagem-erro">{erros.nome}</p>}
-                </div> */}
-
                 <button type="submit" className="botao botao-principal botao-cheio">Criar Conta</button>
             </form>
-
-            {mensagemErro && <p className="mensagem-erro">{mensagemErro}</p>}
-
+            {erros.api && <p className="mensagem-erro">{erros.api}</p>}
             <p className="criar-conta-link">
                 Já tem uma conta? <a href="#" onClick={(e) => { e.preventDefault(); setView('login'); }}>Faça login</a>
             </p>
@@ -212,12 +177,10 @@ const FormularioCriarConta = ({ setView }) => {
     );
 };
 
-
 const FormularioRecuperarSenha = ({ setView }) => {
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        alert("Email de recuperação enviado! (Simulação)");
+        toast.info("Email de recuperação enviado! (Simulação)");
         setView('login');
     }
 
@@ -239,9 +202,15 @@ const FormularioRecuperarSenha = ({ setView }) => {
     );
 };
 
-
-export default function Login({ onLoginSucesso }) {
+export default function Login() {
+    const location = useLocation();
     const [view, setView] = useState('login');
+
+    useEffect(() => {
+        if (location.state?.view === 'criar') {
+            setView('criar');
+        }
+    }, [location.state]);
 
     const renderizarView = () => {
         switch (view) {
@@ -251,10 +220,9 @@ export default function Login({ onLoginSucesso }) {
                 return <FormularioRecuperarSenha setView={setView} />;
             case 'login':
             default:
-                return <FormularioLogin onLoginSucesso={onLoginSucesso} setView={setView} />;
+                return <FormularioLogin setView={setView} />;
         }
     }
-
     return (
         <div className="login-fundo">
             <div className="login-container">

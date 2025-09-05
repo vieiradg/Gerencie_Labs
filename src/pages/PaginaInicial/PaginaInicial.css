@@ -30,11 +30,6 @@
 .texto-grande {
   font-size: 1.5rem;
 }
-.grid-colunas-2 {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-}
 .icone {
   width: 1.5rem;
   height: 1.5rem;
@@ -65,17 +60,9 @@
 .icone-info {
   color: var(--cor-info);
 }
-.icone-pequeno {
-  width: 0.75rem;
-  height: 0.75rem;
-}
 .icone-grande {
   width: 1.5rem;
   height: 1.5rem;
-}
-.icone-gigante {
-  width: 2rem;
-  height: 2rem;
 }
 .botao {
   display: inline-flex;
@@ -87,11 +74,12 @@
   border-radius: var(--borda-arredondada);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s,
+    transform 0.1s;
 }
 .botao-principal {
   background-color: var(--cor-principal);
-  color: #ffffff;
+  color: white;
 }
 .botao-principal:hover {
   background-color: var(--cor-principal-clara);
@@ -103,6 +91,7 @@
 }
 .botao-contorno:hover {
   background-color: var(--cor-fundo-secao);
+  transform: translateY(-2px);
 }
 .botao-grande {
   padding: 0.75rem 1.5rem;
@@ -116,15 +105,18 @@
   color: var(--cor-principal);
 }
 .botao-branco:hover {
-  background-color: #f0f0f0;
+  background-color: rgba(255, 255, 255, 0.799);
+  color: var(--cor-principal);
+  transform: translateY(-2px);
 }
 .botao-contorno-branco {
-  color: black;
-  border-color: white;
-}
-.botao-contorno-branco:hover {
   background-color: white;
   color: var(--cor-principal);
+}
+.botao-contorno-branco:hover {
+  background-color: rgba(255, 255, 255, 0.799);
+  color: var(--cor-principal);
+  transform: translateY(-2px);
 }
 .cartao {
   background-color: white;
@@ -173,6 +165,8 @@
   background-color: var(--cor-principal);
   color: white;
 }
+
+
 .cabecalho {
   background-color: var(--cor-fundo-pagina);
   border-bottom: 1px solid var(--cor-borda);
@@ -229,6 +223,7 @@
   display: block;
   padding: 0.5rem 1rem;
   border-top: 1px solid var(--cor-borda);
+  background-color: white;
 }
 .menu-link-mobile {
   display: block;
@@ -242,6 +237,8 @@
   flex-direction: column;
   gap: 0.5rem;
 }
+
+
 .secao-apresentacao {
   background: linear-gradient(to bottom right, #f8fafc, #f1f5f9);
   padding: 5rem 0;
@@ -280,68 +277,19 @@
 }
 .ilustracao-hero {
   display: none;
-  position: relative;
-  min-height: 350px;
-}
-.cartao-hero {
-  background-color: white;
-  border-radius: var(--borda-arredondada-grande);
-  box-shadow: var(--sombra-media);
-  padding: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  position: absolute;
-  transition: transform 0.3s ease-in-out;
-}
-.cartao-hero:hover {
-  transform: translateY(-10px) scale(1.03);
-  z-index: 10;
-}
-.cartao-hero-icone {
-  width: 3rem;
-  height: 3rem;
-  border-radius: var(--borda-arredondada);
-  display: flex;
   align-items: center;
   justify-content: center;
 }
-.cartao-hero-icone .icone-sucesso-escuro {
-  color: var(--cor-sucesso-escura);
+.imagem-hero {
+  width: 100%;
+  height: auto;
+  max-width: 450px;
+  border-radius: var(--borda-arredondada-grande);
+  box-shadow: var(--sombra-media);
+  object-fit: cover;
 }
-.cartao-hero-icone .icone-info {
-  color: var(--cor-info);
-}
-.cartao-hero-icone .icone-aviso {
-  color: var(--cor-aviso);
-}
-.cartao-hero-titulo {
-  font-size: 0.875rem;
-  color: var(--cor-texto-discreto);
-}
-.cartao-hero-valor {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--cor-texto-escuro);
-}
-.cartao-hero-1 {
-  top: 0;
-  left: 20%;
-  transform: rotate(-8deg);
-  z-index: 2;
-}
-.cartao-hero-2 {
-  top: 35%;
-  left: 0;
-  transform: rotate(5deg);
-  z-index: 3;
-}
-.cartao-hero-3 {
-  top: 50%;
-  left: 40%;
-  transform: rotate(-5deg);
-  z-index: 1;
-}
+
+
 .secao {
   padding: 5rem 0;
 }
@@ -371,6 +319,8 @@
 .secao-titulo.texto-branco {
   color: white;
 }
+
+
 .grid-estatisticas {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -416,6 +366,28 @@
   background-color: var(--cor-fundo-secao);
   border: none;
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+.depoimento-cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.depoimento-avatar {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.depoimento-autor {
+  font-weight: 600;
+  color: var(--cor-texto-escuro);
+}
+.depoimento-cargo {
+  font-size: 0.875rem;
+  color: var(--cor-texto-discreto);
 }
 .depoimento-estrelas {
   display: flex;
@@ -425,20 +397,13 @@
 .depoimento-estrelas .icone {
   width: 1.25rem;
   height: 1.25rem;
-  fill: currentColor;
+  fill: var(--cor-amarelo) !important; 
+  stroke: none !important;
 }
 .depoimento-texto {
   font-style: italic;
   color: var(--cor-texto-comum);
-  margin-bottom: 1rem;
-}
-.depoimento-autor {
-  font-weight: 600;
-  color: var(--cor-texto-escuro);
-}
-.depoimento-cargo {
-  font-size: 0.875rem;
-  color: var(--cor-texto-discreto);
+  flex-grow: 1;
 }
 .grid-precos {
   display: grid;
@@ -502,6 +467,8 @@
 .botao-final-cartao {
   margin-top: auto;
 }
+
+
 .cta-botoes {
   display: flex;
   flex-direction: column;
@@ -543,6 +510,7 @@
   justify-content: center;
   color: var(--cor-texto-discreto);
   font-size: 0.875rem;
+  text-decoration: none;
 }
 .rodape-coluna-links h4 {
   font-weight: 600;
@@ -556,6 +524,7 @@
 }
 .link-rodape {
   color: var(--cor-texto-discreto);
+  text-decoration: none;
 }
 .link-rodape:hover {
   color: var(--cor-texto-escuro);
@@ -575,6 +544,8 @@
   display: flex;
   gap: 1.5rem;
 }
+
+
 @media (min-width: 640px) {
   .botoes-apresentacao,
   .cta-botoes {
@@ -600,7 +571,7 @@
     grid-template-columns: repeat(3, 1fr);
   }
   .rodape-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 2fr 1fr 1fr 1fr;
     text-align: left;
   }
   .rodape-redes-sociais {
@@ -613,15 +584,13 @@
 }
 @media (min-width: 1024px) {
   .secao-apresentacao-container {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr 0.9fr;
+    gap: 4rem;
   }
   .ilustracao-hero {
-    display: block;
+    display: flex;
   }
   .titulo-principal {
     font-size: 3.75rem;
-  }
-  .grid-funcionalidades {
-    grid-template-columns: repeat(3, 1fr);
   }
 }
