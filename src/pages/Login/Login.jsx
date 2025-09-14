@@ -17,10 +17,9 @@ const FormularioLogin = ({ setView }) => {
     const [erro, setErro] = useState('');
     const [mostrarSenha, setMostrarSenha] = useState(false);
 
-
     const fazerLogin = async (e) => {
         e.preventDefault();
-        setErro(''); 
+        setErro('');
 
         try {
             const resposta = await api.post("/user/login", {
@@ -30,21 +29,16 @@ const FormularioLogin = ({ setView }) => {
 
             const { token, user } = resposta.data;
             
-
-            localStorage.setItem("$token", token);
-
-
             toast.success("Login realizado com sucesso!");
             
-
-            login(user); 
+            login(token, user); 
+            
             navigate('/dashboard');
 
         } catch (error) {
             const mensagem = error.response?.data?.message || "Email ou senha inválidos.";
             console.log(error.response?.data);
             setErro(mensagem);
-
             toast.error(mensagem);
         }
     };
@@ -52,7 +46,7 @@ const FormularioLogin = ({ setView }) => {
     return (
         <>
             <h2 className="login-titulo">Acesse sua conta</h2>
-       
+        
             <form onSubmit={fazerLogin} className="login-formulario">
                 <div className="campo-grupo">
                     <label htmlFor="email">Email</label>
@@ -99,11 +93,10 @@ const FormularioCriarConta = ({ setView }) => {
         cpf: z.string().length(11, "CPF deve ter 11 dígitos").regex(/^\d+$/, "CPF só pode conter números"),
     });
 
-
     const cadastrarUsuario = async (e) => {
         e.preventDefault();
         setErros({});
-      
+    
         const formData = { nome, email, senha, cpf };
         const result = schema.safeParse(formData);
 
@@ -124,7 +117,6 @@ const FormularioCriarConta = ({ setView }) => {
         try {
             const resposta = await api.post("/user/register", usuario);
             if (resposta.status === 201) {
-         
                 toast.success(`Parabéns ${nome}, sua conta foi criada com sucesso!`);
                 setView('login');
             }
@@ -132,7 +124,6 @@ const FormularioCriarConta = ({ setView }) => {
             const mensagem = error.response?.data?.message || "Erro ao cadastrar usuário. Tente novamente.";
             console.log(error.response?.data);
             setErros({ api: mensagem });
-
             toast.error(mensagem);
         }
     };
@@ -140,7 +131,6 @@ const FormularioCriarConta = ({ setView }) => {
     return (
         <>
             <h2 className="login-titulo">Crie sua conta</h2>
-
             <form onSubmit={cadastrarUsuario} className="login-formulario" noValidate>
                 <div className="campo-grupo">
                     <label htmlFor="nome">Nome completo</label>

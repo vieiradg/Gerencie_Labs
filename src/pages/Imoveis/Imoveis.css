@@ -1,7 +1,7 @@
 .grid-cartoes-imoveis {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem; /* Adiciona espaçamento entre os cartões */
+    gap: 1.5rem;
 }
 
 .cartao-imovel {
@@ -32,24 +32,33 @@
     font-size: 0.875rem;
 }
 
-.imovel-status {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 500;
+
+
+.detalhes-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
-.status-alugado {
-    background-color: var(--cor-aviso-clara);
-    color: var(--cor-aviso);
+.botoes-acao {
+    display: flex;
+    gap: 1rem;
 }
 
-.status-disponivel {
-    background-color: var(--cor-sucesso-clara);
-    color: var(--cor-sucesso-escura);
+.botoes-acao .botao svg {
+    margin-right: 0.5rem;
 }
 
+.botao-perigo {
+    background-color: var(--cor-erro, #ef4444);
+    color: white;
+}
+.botao-perigo:hover {
+    background-color: var(--cor-erro-escura, #dc2626);
+}
 
 
 .abas-navegacao {
@@ -66,9 +75,7 @@
     font-weight: 500;
     cursor: pointer;
     background: none;
-    border-top: none;
-    border-left: none;
-    border-right: none;
+    border: none;
     font-family: var(--fonte-padrao);
     font-size: 1rem;
 }
@@ -78,21 +85,33 @@
     border-bottom-color: var(--cor-principal);
 }
 
+
 .contrato-layout {
     display: grid;
     grid-template-columns: 1fr;
     gap: 2rem;
 }
 
-.texto-contrato h3 {
+@media (min-width: 1024px) {
+    .contrato-layout {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+.texto-contrato h3 { margin-bottom: 1.5rem; }
+.texto-contrato h4 { margin-top: 1.5rem; margin-bottom: 0.5rem; }
+.texto-contrato p { line-height: 1.6; }
+
+
+
+.resumo-contrato-container .cartao h3 {
     margin-bottom: 1.5rem;
 }
-.texto-contrato h4 {
-    margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
-}
-.texto-contrato p {
-    line-height: 1.6;
+
+.resumo-contrato-itens-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 .resumo-contrato-item {
@@ -100,12 +119,15 @@
     align-items: flex-start;
     gap: 1rem;
 }
+
 .resumo-contrato-item h4 {
-    margin-bottom: 0.25rem;
+    margin: 0 0 0.25rem 0;
     font-size: 0.875rem;
     color: var(--cor-texto-discreto);
 }
+
 .resumo-contrato-item p {
+    margin: 0;
     font-weight: 500;
     color: var(--cor-texto-escuro);
 }
@@ -115,6 +137,7 @@
     padding-top: 1.5rem;
     border-top: 1px solid var(--cor-borda);
 }
+
 .assinatura-checkbox {
     display: flex;
     align-items: center;
@@ -122,16 +145,28 @@
     margin-bottom: 1rem;
 }
 
-.botao-desabilitado {
-    background-color: #94A3B8; /* slate-400 */
-    cursor: not-allowed;
-}
-.botao-desabilitado:hover {
-    background-color: #94A3B8;
+
+.placeholder-conteudo {
+    background-color: white;
+    padding: 3rem 2rem;
+    border-radius: var(--borda-arredondada-grande);
+    text-align: center;
+    border: 1px solid var(--cor-borda);
 }
 
-@media (min-width: 1024px) {
-    .contrato-layout {
-        grid-template-columns: 2fr 1fr;
-    }
+.placeholder-conteudo .icone {
+    color: var(--cor-principal);
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1rem;
+}
+
+.placeholder-conteudo h3 {
+    font-size: 1.25rem;
+    color: var(--cor-texto-escuro);
+    margin-bottom: 0.5rem;
+}
+
+.placeholder-conteudo p {
+    color: var(--cor-texto-discreto);
 }
