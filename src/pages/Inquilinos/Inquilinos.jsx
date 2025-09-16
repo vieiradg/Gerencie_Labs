@@ -5,6 +5,7 @@ import { toast } from "react-toastify"
 import api from "../../services/Api";
 
 
+
 const Modal = ({ aberto, fechar, titulo, children }) => {
     if (!aberto) return null;
     return (
@@ -22,28 +23,71 @@ const Modal = ({ aberto, fechar, titulo, children }) => {
     );
 };
 
-
-
 const FormularioInquilino = ({ inquilino, fechar }) => {
+    const token = localStorage.getItem("token");
 
-    const [nome, setNome] = useState(inquilino ? inquilino.nome : '');
-    const [imovel, setImovel] = useState(inquilino ? inquilino.imovel : '');
+    const [name, setName] = useState(inquilino?.name || "");
+    const [phoneNumber, setPhoneNumber] = useState(inquilino?.phone_number || "");
+    const [cpf, setCpf] = useState(inquilino?.cpf || "");
+    const [erro, setErro] = useState("");
+
+    const tenantRegister = async (tenantData) => {
+        try {
+            await api.post("/tenant/register", tenantData, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            toast.success(`Inquilino ${inquilino ? "atualizado" : "registrado"} com sucesso!`);
+            fechar();
+        } catch (error) {
+            const mensagem = error.response?.data?.error || "Erro desconhecido";
+            setErro(mensagem);
+            toast.error(mensagem);
+            console.log(error.response?.data);
+        }
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        alert(`Inquilino ${inquilino ? 'atualizado' : 'salvo'} com sucesso! (Simulação)`);
-        fechar();
+        tenantRegister({
+            name,
+            phone_number: phoneNumber,
+            cpf
+        });
     };
 
     return (
         <form className="formulario-modal" onSubmit={handleSubmit}>
+            {erro && <p className="erro">{erro}</p>}
+
             <div className="campo-grupo">
                 <label htmlFor="nome">Nome do Inquilino</label>
-                <input type="text" id="nome" value={nome} onChange={(e) => setNome(e.target.value)} required />
+                <input
+                    type="text"
+                    id="nome"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                />
             </div>
+
             <div className="campo-grupo">
-                <label htmlFor="imovel">Imóvel Alugado</label>
-                <input type="text" id="imovel" value={imovel} onChange={(e) => setImovel(e.target.value)} required />
+                <label htmlFor="telefone">Telefone</label>
+                <input
+                    type="text"
+                    id="telefone"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                />
+            </div>
+
+            <div className="campo-grupo">
+                <label htmlFor="cpf">CPF</label>
+                <input
+                    type="text"
+                    id="cpf"
+                    value={cpf}
+                    onChange={(e) => setCpf(e.target.value)}
+                />
             </div>
 
             <div className="modal-rodape">
@@ -53,7 +97,6 @@ const FormularioInquilino = ({ inquilino, fechar }) => {
         </form>
     );
 };
-
 
 
 export default function Inquilinos() {
@@ -147,7 +190,7 @@ export default function Inquilinos() {
                     </table>
                 </div>
             )}
-            
+
         </div>
     );
 }
