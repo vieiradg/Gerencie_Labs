@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
 
         if (token && user) {
             api.defaults.headers.Authorization = `Bearer ${token}`;
-            setAuth({ isAuthenticated: true, user: JSON.parse(user) });
+            // setAuth({ isAuthenticated: true, user: JSON.parse(user) });
         }
     }, []);
 
