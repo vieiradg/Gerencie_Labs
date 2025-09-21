@@ -43,8 +43,27 @@
   padding: 0.75rem;
   border: 1px solid var(--cor-borda);
   border-radius: var(--borda-arredondada);
-  font-size: 1rem;
+  font-size: 1rem;  
 }
+
+.campo-grupo select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--borda-arredondada);
+  font-size: 1rem;
+  appearance: none;       
+}
+
+.campo-grupo input[type=number]::-webkit-inner-spin-button,
+.campo-grupo input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.campo-grupo input[type=number] {
+  -moz-appearance: textfield;
+}
+
 .campo-senha-container {
   position: relative;
   display: flex;
