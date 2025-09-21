@@ -24,8 +24,6 @@ const Modal = ({ aberto, fechar, titulo, children }) => {
 };
 
 const FormularioInquilino = ({ inquilino, fechar }) => {
-    const token = localStorage.getItem("token");
-
     const [name, setName] = useState(inquilino?.name || "");
     const [phoneNumber, setPhoneNumber] = useState(inquilino?.phone_number || "");
     const [cpf, setCpf] = useState(inquilino?.cpf || "");
@@ -33,16 +31,12 @@ const FormularioInquilino = ({ inquilino, fechar }) => {
 
     const tenantRegister = async (tenantData) => {
         try {
-            await api.post("/tenant/register", tenantData, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            toast.success(`Inquilino ${inquilino ? "atualizado" : "registrado"} com sucesso!`);
+            await api.post("/tenant/register", tenantData);
+            toast.success(`Inquilino registrado com sucesso!`);
             fechar();
         } catch (error) {
-            const mensagem = error.response?.data?.error || "Erro desconhecido";
             setErro(mensagem);
             toast.error(mensagem);
-            console.log(error.response?.data);
         }
     };
 
