@@ -44,7 +44,7 @@ export default function Dashboard({ setPaginaAtiva }) {
         }
     };
 
-    useEffect(() => { carregarPainel(); }, []);
+    useEffect(() => { carregarPainel()}, []);
 
     return (
         <div>
