@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./Inquilinos.css";
 import { IconeMais, IconeFechar } from "../../components/Icons";
+import { toast } from "react-toastify"
+import api from "../../services/Api";
+
 
 
 const Modal = ({ aberto, fechar, titulo, children }) => {
@@ -20,28 +23,65 @@ const Modal = ({ aberto, fechar, titulo, children }) => {
     );
 };
 
-
-
 const FormularioInquilino = ({ inquilino, fechar }) => {
+    const [name, setName] = useState(inquilino?.name || "");
+    const [phoneNumber, setPhoneNumber] = useState(inquilino?.phone_number || "");
+    const [cpf, setCpf] = useState(inquilino?.cpf || "");
+    const [erro, setErro] = useState("");
 
-    const [nome, setNome] = useState(inquilino ? inquilino.nome : '');
-    const [imovel, setImovel] = useState(inquilino ? inquilino.imovel : '');
-    
+    const tenantRegister = async (tenantData) => {
+        try {
+            await api.post("/tenant/register", tenantData);
+            toast.success(`Inquilino registrado com sucesso!`);
+            fechar();
+        } catch (error) {
+            setErro(mensagem);
+            toast.error(mensagem);
+        }
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        alert(`Inquilino ${inquilino ? 'atualizado' : 'salvo'} com sucesso! (Simulação)`);
-        fechar();
+        tenantRegister({
+            name,
+            phone_number: phoneNumber,
+            cpf
+        });
     };
 
     return (
         <form className="formulario-modal" onSubmit={handleSubmit}>
+            {erro && <p className="erro">{erro}</p>}
+
             <div className="campo-grupo">
                 <label htmlFor="nome">Nome do Inquilino</label>
-                <input type="text" id="nome" value={nome} onChange={(e) => setNome(e.target.value)} required />
+                <input
+                    type="text"
+                    id="nome"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                />
             </div>
+
             <div className="campo-grupo">
-                <label htmlFor="imovel">Imóvel Alugado</label>
-                <input type="text" id="imovel" value={imovel} onChange={(e) => setImovel(e.target.value)} required />
+                <label htmlFor="telefone">Telefone</label>
+                <input
+                    type="text"
+                    id="telefone"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                />
+            </div>
+
+            <div className="campo-grupo">
+                <label htmlFor="cpf">CPF</label>
+                <input
+                    type="text"
+                    id="cpf"
+                    value={cpf}
+                    onChange={(e) => setCpf(e.target.value)}
+                />
             </div>
 
             <div className="modal-rodape">
@@ -53,35 +93,45 @@ const FormularioInquilino = ({ inquilino, fechar }) => {
 };
 
 
-
 export default function Inquilinos() {
     const [inquilinos, setInquilinos] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [modalAberto, setModalAberto] = useState(false);
     const [inquilinoSelecionado, setInquilinoSelecionado] = useState(null);
+    const [erro, setErro] = useState("");
+    const token = localStorage.getItem("token");
+
+
+    const carregarInquilinos = async () => {
+        try {
+            const resposta = await api.get("/dashboard/tenants_panel", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const { tenants } = resposta.data;
+
+            setInquilinos(tenants);
+            toast.success("Painel carregado com sucesso!");
+        } catch (error) {
+            const mensagem = error.response?.data?.error || "Erro desconhecido";
+            setErro(mensagem);
+            toast.error(mensagem);
+        } finally {
+            setCarregando(false);
+        }
+    };
 
     useEffect(() => {
-
-        const buscarInquilinos = () => {
-            setTimeout(() => {
-                setInquilinos([
-                    { id: 1, nome: "João Silva", imovel: "Apartamento Centro", status: "Em dia" },
-                    { id: 2, nome: "Maria Santos", imovel: "Kitnet Estudante", status: "Atrasado" },
-                    { id: 3, nome: "Carlos Souza", imovel: "Casa Bairro Novo", status: "Em dia" },
-                ]);
-                setCarregando(false);
-            }, 500);
-        };
-        buscarInquilinos();
+        carregarInquilinos();
     }, []);
 
     const abrirModalParaNovo = () => {
-        setInquilinoSelecionado(null); 
+        setInquilinoSelecionado(null);
         setModalAberto(true);
     };
 
     const abrirModalParaEditar = (inquilino) => {
-        setInquilinoSelecionado(inquilino); 
+        setInquilinoSelecionado(inquilino);
         setModalAberto(true);
     };
 
@@ -92,9 +142,9 @@ export default function Inquilinos() {
                 fechar={() => setModalAberto(false)}
                 titulo={inquilinoSelecionado ? "Editar Inquilino" : "Adicionar Novo Inquilino"}
             >
-                <FormularioInquilino 
-                    inquilino={inquilinoSelecionado} 
-                    fechar={() => setModalAberto(false)} 
+                <FormularioInquilino
+                    inquilino={inquilinoSelecionado}
+                    fechar={() => setModalAberto(false)}
                 />
             </Modal>
 
@@ -121,8 +171,8 @@ export default function Inquilinos() {
                         <tbody>
                             {inquilinos.map((inquilino) => (
                                 <tr key={inquilino.id} onClick={() => abrirModalParaEditar(inquilino)} title="Clique para ver os detalhes">
-                                    <td>{inquilino.nome}</td>
-                                    <td>{inquilino.imovel}</td>
+                                    <td>{inquilino.name}</td>
+                                    <td>{inquilino.property_name || "Inquilino não cadastrado a nenhum imóvel"}</td>
                                     <td>
                                         <span className={`status-pagamento ${inquilino.status === "Em dia" ? "status-em-dia" : "status-atrasado"}`}>
                                             {inquilino.status}
@@ -134,6 +184,7 @@ export default function Inquilinos() {
                     </table>
                 </div>
             )}
+
         </div>
     );
 }
