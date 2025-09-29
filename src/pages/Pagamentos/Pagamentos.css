@@ -1,0 +1,111 @@
+.pagina-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.pagina-titulo {
+    color: var(--cor-texto-principal);
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.tabela-container {
+    background-color: var(--cor-fundo-card);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    overflow-x: auto;
+}
+
+.tabela {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.tabela th, .tabela td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--cor-borda-clara);
+}
+
+.tabela th {
+    background-color: var(--cor-fundo-cabecalho-tabela);
+    color: var(--cor-texto-cabecalho-tabela);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.tabela tbody tr:hover {
+    background-color: var(--cor-fundo-hover);
+}
+
+.tabela td {
+    color: var(--cor-texto-principal);
+}
+
+.status-pagamento {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: capitalize;
+}
+
+.status-paid {
+    background-color: var(--cor-sucesso-claro);
+    color: var(--cor-sucesso);
+}
+
+.status-pending {
+    background-color: var(--cor-alerta-claro);
+    color: var(--cor-alerta);
+}
+
+.status-partial {
+    background-color: var(--cor-atencao-claro);
+    color: var(--cor-atencao);
+}
+
+/* NOVO STATUS: ATRASADO (Overdue) */
+.status-overdue {
+    background-color: var(--cor-perigo-claro, #fcebeb);
+    color: var(--cor-erro, #dc2626);
+    border: 1px solid var(--cor-erro-claro);
+}
+
+.tabela td .botao-principal {
+    background-color: var(--cor-principal);
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tabela td .botao-principal:hover {
+    background-color: var(--cor-principal-hover);
+}
+
+@media (max-width: 768px) {
+    .pagina-cabecalho {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .pagina-titulo {
+        margin-bottom: 15px;
+    }
+
+    .tabela th, .tabela td {
+        padding: 10px;
+    }
+}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./Imoveis.css";
 import {
@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 const Modal = ({ aberto, fechar, titulo, children }) => {
     if (!aberto) return null;
     return (
-        <div className="fundo-modal" onClick={fechar}>
+        <div className="fundo-modal">
             <div className="modal-conteudo" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-cabecalho">
                     <h2 className="modal-titulo">{titulo}</h2>
@@ -39,7 +39,11 @@ const FormularioImovel = ({ fechar, onImovelAdicionado, imovelParaEditar, onImov
         house_neighborhood: '', city: '', postal_code: ''
     });
     const [erro, setErro] = useState('');
+    const [buscandoCep, setBuscandoCep] = useState(false);
     const isEditMode = !!imovelParaEditar;
+    
+    const cepNaoEncontrado = !formData.house_street;
+    const disableFields = !isEditMode && !cepNaoEncontrado;
 
     useEffect(() => {
         if (isEditMode && imovelParaEditar) {
@@ -59,21 +63,99 @@ const FormularioImovel = ({ fechar, onImovelAdicionado, imovelParaEditar, onImov
         }
     }, [imovelParaEditar, isEditMode]);
 
-    const handleChange = (e) => {
-        const { id, value } = e.target;
-        setFormData(prev => ({ ...prev, [id]: value }));
-    };
+    const buscarCep = useCallback(async (cepLimpo) => {
+        setBuscandoCep(true);
+        setErro('');
+        
+        if (!/^\d{8}$/.test(cepLimpo)) {
+            setBuscandoCep(false);
+            return;
+        }
 
-    const handleSubmit = async (e) => {
+        try {
+            const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+            
+            if (!response.ok) {
+                toast.error("Erro no formato do CEP. Verifique se tem 8 dígitos.");
+                return;
+            }
+
+            const data = await response.json();
+
+            if (data.erro) {
+                toast.error("CEP não encontrado na base de dados.");
+                setFormData(prev => ({
+                    ...prev,
+                    house_street: '',
+                    house_neighborhood: '',
+                    city: '',
+                }));
+                return;
+            }
+
+            toast.success(`Endereço encontrado: ${data.logradouro}, ${data.bairro}`);
+
+            setFormData(prev => ({
+                ...prev,
+                house_street: data.logradouro || '',
+                house_neighborhood: data.bairro || '',
+                city: data.localidade || '',
+            }));
+
+        } catch (error) {
+            toast.error("Erro ao buscar CEP. Tente novamente.");
+        } finally {
+            setBuscandoCep(false);
+        }
+    }, []);
+
+    const handleChange = useCallback((e) => {
+        const { id, value } = e.target;
+        
+        let finalValue = value;
+        if (id === 'postal_code' || id === 'house_number') {
+            finalValue = value.replace(/\D/g, ''); 
+        }
+
+        setFormData(prev => ({ ...prev, [id]: finalValue }));
+        if (erro) setErro('');
+
+        if (id === 'postal_code') {
+            if (finalValue.length === 8) {
+                buscarCep(finalValue);
+            }
+        }
+    }, [erro, buscarCep]);
+
+    const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
         setErro('');
+
+        const { house_street, house_number, house_complement, house_neighborhood, city, postal_code } = formData;
+        
+        const requiredFields = ['house_street', 'house_number', 'house_neighborhood', 'city', 'postal_code'];
+        const isFormIncomplete = requiredFields.some(field => !formData[field]);
+
+        if (isFormIncomplete) {
+            setErro("Todos os campos obrigatórios precisam ser preenchidos.");
+            toast.warn("Verifique os campos obrigatórios.");
+            return;
+        }
+        
+        const autoHouseName = `${house_street.toUpperCase()}, ${house_number}`;
+        
+        const payload = {
+            ...formData,
+            house_name: autoHouseName,
+        };
+
         try {
             if (isEditMode) {
-                const response = await api.put(`/property/update/${imovelParaEditar.id}`, formData);
+                const response = await api.put(`/property/update/${imovelParaEditar.id}`, payload);
                 toast.success(response.data.message || 'Imóvel atualizado com sucesso!');
                 onImovelAtualizado(response.data.property);
             } else {
-                const response = await api.post('/property/register', formData);
+                const response = await api.post('/property/register', payload);
                 toast.success(response.data.message || 'Imóvel cadastrado com sucesso!');
                 onImovelAdicionado(response.data.property);
             }
@@ -83,30 +165,50 @@ const FormularioImovel = ({ fechar, onImovelAdicionado, imovelParaEditar, onImov
             setErro(mensagemErro);
             toast.error(mensagemErro);
         }
-    };
+    }, [formData, isEditMode, imovelParaEditar, fechar, onImovelAdicionado, onImovelAtualizado]);
 
     return (
         <form className="formulario-modal" onSubmit={handleSubmit}>
-            <div className="campo-grupo"><label htmlFor="house_street">Rua / Avenida</label><input type="text" id="house_street" value={formData.house_street} onChange={handleChange} required /></div>
-            <div className="campos-divididos">
-                <div className="campo-grupo"><label htmlFor="house_number">Número</label><input type="text" id="house_number" value={formData.house_number} onChange={handleChange} required /></div>
-                <div className="campo-grupo"><label htmlFor="house_complement">Complemento</label><input type="text" id="house_complement" value={formData.house_complement} onChange={handleChange} /></div>
+            
+            <div className="campo-grupo">
+                <label htmlFor="postal_code">CEP</label>
+                <input type="text" id="postal_code" value={formData.postal_code} onChange={handleChange} maxLength={8} required disabled={buscandoCep} />
             </div>
-            <div className="campo-grupo"><label htmlFor="house_neighborhood">Bairro</label><input type="text" id="house_neighborhood" value={formData.house_neighborhood} onChange={handleChange} required /></div>
+
             <div className="campos-divididos">
-                <div className="campo-grupo"><label htmlFor="city">Cidade</label><input type="text" id="city" value={formData.city} onChange={handleChange} required /></div>
-                <div className="campo-grupo"><label htmlFor="postal_code">CEP</label><input type="text" id="postal_code" value={formData.postal_code} onChange={handleChange} required /></div>
+                <div className="campo-grupo">
+                    <label htmlFor="house_number">Número</label>
+                    <input type="text" id="house_number" value={formData.house_number} onChange={handleChange} required />
+                </div>
+                <div className="campo-grupo">
+                    <label htmlFor="house_complement">Complemento</label>
+                    <input type="text" id="house_complement" value={formData.house_complement} onChange={handleChange} />
+                </div>
             </div>
+
+            <div className="campo-grupo">
+                <label htmlFor="house_street">Rua / Avenida {buscandoCep && "(Buscando...)"}</label>
+                <input type="text" id="house_street" value={formData.house_street} onChange={handleChange} required disabled={disableFields} />
+            </div>
+            <div className="campo-grupo">
+                <label htmlFor="house_neighborhood">Bairro</label>
+                <input type="text" id="house_neighborhood" value={formData.house_neighborhood} onChange={handleChange} required disabled={disableFields} />
+            </div>
+            <div className="campo-grupo">
+                <label htmlFor="city">Cidade</label>
+                <input type="text" id="city" value={formData.city} onChange={handleChange} required disabled={disableFields} />
+            </div>
+            
             {erro && <p className="mensagem-erro">{erro}</p>}
             <div className="modal-rodape">
-                <button type="button" className="botao botao-contorno" onClick={fechar}>Cancelar</button>
-                <button type="submit" className="botao botao-principal">{isEditMode ? 'Salvar Alterações' : 'Salvar Imóvel'}</button>
+                <button type="button" className="botao botao-contorno" onClick={fechar} disabled={buscandoCep}>Cancelar</button>
+                <button type="submit" className="botao botao-principal" disabled={buscandoCep}>{isEditMode ? 'Salvar Alterações' : 'Salvar Imóvel'}</button>
             </div>
         </form>
     );
 };
 
-function ListaDeImoveis({ imoveis, carregando, onAbrirModal }) {
+const ListaDeImoveis = ({ imoveis, carregando, onAbrirModal }) => {
     const navigate = useNavigate();
     if (carregando) return <p>Carregando imóveis...</p>;
 
@@ -120,7 +222,7 @@ function ListaDeImoveis({ imoveis, carregando, onAbrirModal }) {
                 <div className="grid-cartoes-imoveis">
                     {imoveis.map((imovel) => (
                         <div key={imovel.id} className="cartao-imovel" onClick={() => navigate(`/dashboard/imoveis/${imovel.id}`)}>
-                            <h3 className="imovel-nome">{`${imovel.house_street}, ${imovel.house_number}`}</h3>
+                            <h3 className="imovel-nome">{imovel.house_name ? imovel.house_name : `${imovel.house_street}, ${imovel.house_number}`}</h3>
                             <p className="imovel-endereco">{`${imovel.house_neighborhood} - ${imovel.city}`}</p>
                         </div>
                     ))}
@@ -130,9 +232,9 @@ function ListaDeImoveis({ imoveis, carregando, onAbrirModal }) {
             )}
         </div>
     );
-}
+};
 
-function DetalhesDoImovel({ imovelId, onEditar, onImovelAtualizado, onExcluir }) {
+const DetalhesDoImovel = ({ imovelId, onEditar, onImovelAtualizado, onExcluir }) => {
     const [imovel, setImovel] = useState(null);
     const [carregando, setCarregando] = useState(true);
     const [abaAtiva, setAbaAtiva] = useState("contrato");
@@ -148,7 +250,7 @@ function DetalhesDoImovel({ imovelId, onEditar, onImovelAtualizado, onExcluir })
             .finally(() => setCarregando(false));
     }, [imovelId, onImovelAtualizado]);
 
-    const handleDelete = async () => {
+    const handleDelete = useCallback(async () => {
         const confirmar = window.confirm("Você tem certeza que deseja excluir este imóvel? Esta ação não pode ser desfeita.");
         if (confirmar) {
             try {
@@ -160,7 +262,7 @@ function DetalhesDoImovel({ imovelId, onEditar, onImovelAtualizado, onExcluir })
                 toast.error(error.response?.data?.message || "Erro ao excluir imóvel.");
             }
         }
-    };
+    }, [imovelId, onExcluir, navigate]);
 
     if (carregando) return <p>Carregando detalhes...</p>;
     if (!imovel) return <p>Não foi possível carregar os detalhes do imóvel.</p>;
@@ -182,7 +284,6 @@ function DetalhesDoImovel({ imovelId, onEditar, onImovelAtualizado, onExcluir })
                         <aside className="resumo-contrato-container">
                             <div className="cartao">
                                 <h3>Resumo do Contrato</h3>
-                                {/* DIV ADICIONADA AQUI PARA O ESPAÇAMENTO DO CSS FUNCIONAR */}
                                 <div className="resumo-contrato-itens-container">
                                     <div className="resumo-contrato-item"><IconeUsuarios className="icone" /><div><h4>Inquilino</h4><p>{dadosContratoEstatico.inquilino}</p></div></div>
                                     <div className="resumo-contrato-item"><IconeRelogio className="icone" /><div><h4>Valor do Aluguel</h4><p>{dadosContratoEstatico.valorAtual}</p></div></div>
@@ -201,7 +302,7 @@ function DetalhesDoImovel({ imovelId, onEditar, onImovelAtualizado, onExcluir })
     return (
         <div>
             <div className="detalhes-cabecalho">
-                <h1 className="pagina-titulo">{`${imovel.house_street}, ${imovel.house_number}`}</h1>
+                <h1 className="pagina-titulo">{imovel.house_name ? imovel.house_name : `${imovel.house_street}, ${imovel.house_number}`}</h1>
                 <div className="botoes-acao">
                     <button onClick={() => onEditar(imovel)} className="botao botao-principal"><IconeEditar /><span>Editar</span></button>
                     <button onClick={handleDelete} className="botao botao-perigo"><IconeLixeira /><span>Excluir</span></button>
@@ -216,7 +317,7 @@ function DetalhesDoImovel({ imovelId, onEditar, onImovelAtualizado, onExcluir })
             <div>{renderizarConteudoAba()}</div>
         </div>
     );
-}
+};
 
 export default function Imoveis() {
     const { imovelId } = useParams();

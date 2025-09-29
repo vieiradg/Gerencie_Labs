@@ -60,9 +60,6 @@
   -webkit-appearance: none;
   margin: 0;
 }
-.campo-grupo input[type=number] {
-  -moz-appearance: textfield;
-}
 
 .campo-senha-container {
   position: relative;

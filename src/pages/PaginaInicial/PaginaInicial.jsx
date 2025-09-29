@@ -79,7 +79,7 @@ export default function PaginaInicial() {
                         <a href="#precos" className="menu-link">Preços</a>
                         <a href="#depoimentos" className="menu-link">Depoimentos</a>
                         <button onClick={irParaLogin} className="botao botao-contorno">Entrar</button>
-                        <button onClick={irParaCriarConta} className="botao botao-principal">Quero Liberdade</button>
+                        <button onClick={irParaCriarConta} className="botao botao-principal">Cadastrar</button>
                     </nav>
                     <div className="menu-mobile-botao">
                         <button onClick={() => setMenuAberto(!menuAberto)}> {menuAberto ? <IconeFechar className="icone" /> : <IconeMenu className="icone" />} </button>

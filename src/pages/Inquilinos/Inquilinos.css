@@ -2,7 +2,7 @@
     background-color: white;
     border-radius: var(--borda-arredondada-grande);
     box-shadow: var(--sombra-pequena);
-    overflow: hidden; /* Garante que as bordas arredondadas funcionem na tabela */
+    overflow: hidden;
 }
 
 .tabela {
@@ -53,5 +53,5 @@
 
 .status-atrasado {
     background-color: var(--cor-aviso-clara);
-    color: #92400E; /* amber-800 */
+    color: #92400E;
 }

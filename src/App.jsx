@@ -10,54 +10,52 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import Imoveis from './pages/Imoveis/Imoveis';
 import Inquilinos from './pages/Inquilinos/Inquilinos';
 import Documentos from './pages/Documentos/Documentos';
+import Pagamentos from './pages/Pagamentos/Pagamentos';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
-
 export default function App() {
 
-    <React.Fragment>
-
-        <ToastContainer
-            position="top-right"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-        />
-    </React.Fragment>
-
     return (
-        <Routes>
-            {/* --- Rotas Públicas --- */}
-            <Route path="/" element={<PaginaInicial />} />
-            <Route path="/login" element={<Login />} />
+        <React.Fragment>
 
-            {/* --- Rota Protegida com Rotas Aninhadas --- */}
-            <Route 
-                path="/dashboard" 
-                element={
-                    <ProtectedRoute>
-                        <Layout />
-                    </ProtectedRoute>
-                }
-            >
-                <Route index element={<Dashboard />} /> 
-                <Route path="imoveis" element={<Imoveis />} />
-                {/* Rota para os detalhes de um imóvel específico */}
-                <Route path="imoveis/:imovelId" element={<Imoveis />} /> 
-                <Route path="inquilinos" element={<Inquilinos />} />
-                <Route path="documentos" element={<Documentos />} />
-            </Route>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
+            
+            <Routes>
+                <Route path="/" element={<PaginaInicial />} />
+                <Route path="/login" element={<Login />} />
 
-            <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
+                <Route 
+                    path="/dashboard" 
+                    element={
+                        <ProtectedRoute>
+                            <Layout />
+                        </ProtectedRoute>
+                    }
+                >
+                    <Route index element={<Dashboard />} /> 
+                    <Route path="imoveis" element={<Imoveis />} />
+                    <Route path="imoveis/:imovelId" element={<Imoveis />} /> 
+                    <Route path="inquilinos" element={<Inquilinos />} />
+                    <Route path="documentos" element={<Documentos />} />
+                    <Route path="pagamentos" element={<Pagamentos />} />
+                </Route>
+
+                <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+        </React.Fragment>
     );
 }

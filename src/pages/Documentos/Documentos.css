@@ -3,6 +3,7 @@
   flex-direction: column;
   gap: 1rem;
 }
+
 .item-documento {
   display: flex;
   align-items: center;
@@ -12,17 +13,58 @@
   border-radius: var(--borda-arredondada);
   box-shadow: var(--sombra-pequena);
 }
+
 .documento-icone {
   color: var(--cor-principal);
 }
+
 .documento-info {
   flex-grow: 1;
 }
+
 .documento-nome {
   font-weight: 500;
   color: var(--cor-texto-escuro);
 }
+
 .documento-data {
   font-size: 0.875rem;
   color: var(--cor-texto-discreto);
+}
+
+.documento-acoes {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.documento-acoes .botao-acao {
+  border: 1px solid var(--cor-borda); 
+  background-color: white; 
+  cursor: pointer;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--borda-arredondada);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cor-texto-escuro); 
+}
+
+.documento-acoes .botao-acao:hover {
+  background-color: var(--cor-fundo-hover); 
+  border-color: var(--cor-principal);
+  color: var(--cor-principal);
+}
+
+.documento-acoes .botao-perigo {
+  background-color: var(--cor-erro);
+  border: 1px solid var(--cor-erro);
+  color: white;
+}
+
+.documento-acoes .botao-perigo:hover {
+  background-color: var(--cor-erro-escura);
+  border-color: var(--cor-erro-escura);
+  color: white;
 }

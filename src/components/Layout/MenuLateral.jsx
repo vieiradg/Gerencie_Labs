@@ -1,6 +1,6 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom'; // Importe o NavLink
-import { IconeCasa, IconeGrafico, IconeUsuarios, IconeDocumento } from '../Icons';
+import { NavLink } from 'react-router-dom';
+import { IconeCasa, IconeGrafico, IconeUsuarios, IconeDocumento, IconeDinheiro } from '../Icons'; 
 import './Layout.css';
 
 export default function MenuLateral({ onSair }) {
@@ -25,6 +25,12 @@ export default function MenuLateral({ onSair }) {
                     <IconeUsuarios className="icone"/>
                     <span>Inquilinos</span>
                 </NavLink>
+                
+                <NavLink to="/dashboard/pagamentos" className="menu-item">
+                    <IconeDinheiro className="icone"/>
+                    <span>Pagamentos</span>
+                </NavLink>
+                
                 <NavLink to="/dashboard/documentos" className="menu-item">
                     <IconeDocumento className="icone"/>
                     <span>Documentos</span>

@@ -160,6 +160,15 @@ export const IconeFerramenta = ({ className }) => (
   </Icone>
 );
 
+export const IconeDinheiro = ({ className }) => (
+  <Icone className={className}>
+    <path d="M13 7h1.4c.4 0 .8.2 1.1.5l.3.3c.4.4.6 1 .5 1.5v2.8c0 .3-.2.6-.5.7l-1.4.3c-.3.1-.6.4-.6.7v1.8c0 .3.2.6.5.7l1.4.3c.3.1.5.4.5.7v1.8c0 .3-.2.6-.5.7l-1.4.3c-.3.1-.6.4-.6.7V20" />
+    <path d="M11 7H9.6c-.4 0-.8.2-1.1.5l-.3.3c-.4.4-.6 1-.5 1.5v2.8c0 .3.2.6.5.7l1.4.3c.3.1.6.4.6.7v1.8c0 .3-.2.6-.5.7l-1.4.3c-.3.1-.5.4-.5.7v1.8c0 .3.2.6.5.7l1.4.3c.3.1.6.4.6.7V20" />
+    <rect width="20" height="14" x="2" y="5" rx="3" />
+    <path d="M10 10h4" />
+  </Icone>
+);
+
 export const IconeEditar = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Login.css';
@@ -11,13 +11,12 @@ const FormularioLogin = ({ setView }) => {
     const { login } = useAuth();
     const navigate = useNavigate();
 
-    const [email, setEmail] = useState('admin@gerencie.com');
-    const [senha, setSenha] = useState('1234');
-    const [lembrar, setLembrar] = useState(false);
+    const [email, setEmail] = useState('');
+    const [senha, setSenha] = useState('');
     const [erro, setErro] = useState('');
     const [mostrarSenha, setMostrarSenha] = useState(false);
 
-    const fazerLogin = async (e) => {
+    const fazerLogin = useCallback(async (e) => {
         e.preventDefault();
         setErro('');
 
@@ -41,7 +40,7 @@ const FormularioLogin = ({ setView }) => {
             setErro(mensagem);
             toast.error(mensagem);
         }
-    };
+    }, [email, senha, login, navigate]);
 
     return (
         <>
@@ -62,10 +61,6 @@ const FormularioLogin = ({ setView }) => {
                     </div>
                 </div>
                 <div className="login-opcoes">
-                    <label className="lembrar-grupo">
-                        <input type="checkbox" id="lembrar" checked={lembrar} onChange={(e) => setLembrar(e.target.checked)} />
-                        Lembrar de mim
-                    </label>
                     <a href="#" onClick={(e) => { e.preventDefault(); setView('recuperar'); }}>Esqueci a senha</a>
                 </div>
                 {erro && <p className="mensagem-erro">{erro}</p>}
@@ -83,21 +78,51 @@ const FormularioCriarConta = ({ setView }) => {
     const [email, setEmail] = useState('');
     const [cpf, setCpf] = useState('');
     const [senha, setSenha] = useState('');
+    const [confirmarSenha, setConfirmarSenha] = useState('');
     const [mostrarSenha, setMostrarSenha] = useState(false);
+    const [mostrarConfirmaSenha, setMostrarConfirmaSenha] = useState(false);
     const [erros, setErros] = useState({});
 
+    const nomeCompletoRegex = /^\S+\s+\S+/;
+    const senhaForteRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})/;
+    const MENSAGEM_SENHA = "A senha deve ter 8+ caracteres, 1 letra maiúscula e 1 caractere especial.";
+
     const schema = z.object({
-        nome: z.string().min(1, "Nome é obrigatório"),
-        email: z.string().email("Email inválido"),
-        senha: z.string().min(6, "Senha deve ter no mínimo 6 caracteres"),
-        cpf: z.string().length(11, "CPF deve ter 11 dígitos").regex(/^\d+$/, "CPF só pode conter números"),
+        nome: z.string()
+            .min(1, "Nome é obrigatório")
+            .regex(nomeCompletoRegex, "Por favor, digite seu nome completo (Nome e Sobrenome)"),
+        email: z.string().trim().email("Email inválido"),
+        cpf: z.string()
+            .length(11, "CPF deve ter 11 dígitos")
+            .regex(/^\d+$/, "CPF só pode conter números")
+            .refine(value => !/^(\d)\1{10}$/.test(value), {
+                message: "CPF inválido",
+            }),
+        senha: z.string()
+            .regex(senhaForteRegex, MENSAGEM_SENHA),
+        confirmarSenha: z.string(),
+    })
+    .refine((data) => data.senha === data.confirmarSenha, {
+        message: "As senhas não coincidem",
+        path: ["confirmarSenha"],
     });
 
-    const cadastrarUsuario = async (e) => {
+    const handleInputChange = useCallback((setter, field) => (e) => {
+        setter(e.target.value);
+        if (erros[field]) {
+            setErros(prev => {
+                const newErros = { ...prev };
+                delete newErros[field];
+                return newErros;
+            });
+        }
+    }, [erros]);
+
+    const cadastrarUsuario = useCallback(async (e) => {
         e.preventDefault();
         setErros({});
     
-        const formData = { nome, email, senha, cpf };
+        const formData = { nome, email, senha, confirmarSenha, cpf };
         const result = schema.safeParse(formData);
 
         if (!result.success) {
@@ -126,7 +151,7 @@ const FormularioCriarConta = ({ setView }) => {
             setErros({ api: mensagem });
             toast.error(mensagem);
         }
-    };
+    }, [nome, email, senha, confirmarSenha, cpf, setView]);
 
     return (
         <>
@@ -134,28 +159,44 @@ const FormularioCriarConta = ({ setView }) => {
             <form onSubmit={cadastrarUsuario} className="login-formulario" noValidate>
                 <div className="campo-grupo">
                     <label htmlFor="nome">Nome completo</label>
-                    <input type="text" id="nome" placeholder="Seu nome completo" value={nome} onChange={(e) => setNome(e.target.value)} />
+                    <input type="text" id="nome" placeholder="Seu nome completo" value={nome} onChange={handleInputChange(setNome, 'nome')} />
                     {erros.nome && <p className="mensagem-erro">{erros.nome}</p>}
                 </div>
                 <div className="campo-grupo">
                     <label htmlFor="email-criar">Email</label>
-                    <input type="email" id="email-criar" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <input type="email" id="email-criar" placeholder="seu@email.com" value={email} onChange={handleInputChange(setEmail, 'email')} />
                     {erros.email && <p className="mensagem-erro">{erros.email}</p>}
                 </div>
                 <div className="campo-grupo">
                     <label htmlFor="cpf-criar">CPF</label>
-                    <input type="text" id="cpf-criar" placeholder="00000000000" value={cpf} onChange={(e) => setCpf(e.target.value)} />
+                    <input type="text" id="cpf-criar" placeholder="00000000000" value={cpf} onChange={handleInputChange(setCpf, 'cpf')} />
                     {erros.cpf && <p className="mensagem-erro">{erros.cpf}</p>}
                 </div>
                 <div className="campo-grupo">
                     <label htmlFor="senha-criar">Senha</label>
                     <div className="campo-senha-container">
-                        <input type={mostrarSenha ? 'text' : 'password'} id="senha-criar" placeholder="Crie uma senha forte" value={senha} onChange={(e) => setSenha(e.target.value)} />
+                        <input type={mostrarSenha ? 'text' : 'password'} id="senha-criar" placeholder="Crie uma senha forte" value={senha} onChange={handleInputChange(setSenha, 'senha')} />
                         <button type="button" className="botao-olho" onClick={() => setMostrarSenha(!mostrarSenha)}>
                             {mostrarSenha ? <IconeOlhoFechado className="icone" /> : <IconeOlho className="icone" />}
                         </button>
                     </div>
                     {erros.senha && <p className="mensagem-erro">{erros.senha}</p>}
+                </div>
+                <div className="campo-grupo">
+                    <label htmlFor="confirmar-senha-criar">Confirme a Senha</label>
+                    <div className="campo-senha-container">
+                        <input 
+                            type={mostrarConfirmaSenha ? 'text' : 'password'} 
+                            id="confirmar-senha-criar" 
+                            placeholder="Confirme sua senha" 
+                            value={confirmarSenha} 
+                            onChange={handleInputChange(setConfirmarSenha, 'confirmarSenha')} 
+                        />
+                        <button type="button" className="botao-olho" onClick={() => setMostrarConfirmaSenha(!mostrarConfirmaSenha)}>
+                            {mostrarConfirmaSenha ? <IconeOlhoFechado className="icone" /> : <IconeOlho className="icone" />}
+                        </button>
+                    </div>
+                    {erros.confirmarSenha && <p className="mensagem-erro">{erros.confirmarSenha}</p>}
                 </div>
                 <button type="submit" className="botao botao-principal botao-cheio">Criar Conta</button>
             </form>
