@@ -1,16 +1,33 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "./Pagamentos.css";
-import { IconeMais, IconeCheck, IconeDinheiro } from "../../components/Icons";
+import { IconeCheck, IconeDinheiro } from "../../components/Icons";
 import { toast } from "react-toastify";
 import api from "../../services/Api";
 
-const formatarMoeda = (valor) => {
-    if (valor === undefined || valor === null) return 'R$ 0,00';
-    // CORREÇÃO AQUI: Removemos a divisão por 100 e garantimos a formatação de Moeda
-    const num = String(valor).replace(/[^0-9.]/g, ''); 
+const STATUS_TRANSLATION = {
+    'paid': 'Pago',
+    'pending': 'Pendente',
+    'overdue': 'Atrasado',
+    'partial': 'Parcial'
+};
+
+const translateStatus = (status) => {
+    if (!status) return 'Desconhecido';
+    return STATUS_TRANSLATION[status.toLowerCase()] || 'Desconhecido';
+};
+
+const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString.includes('T') ? dateString : `${dateString}T00:00:00`);
     
-    // Tenta formatar diretamente o valor (ex: 1500.00) como moeda.
-    return parseFloat(num).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    if (isNaN(date.getTime())) return 'N/A';
+    
+    return date.toLocaleDateString('pt-BR');
+};
+
+const formatarMoeda = (valor) => {
+    if (valor === undefined || valor === null || isNaN(valor)) return 'R$ 0,00';
+    return parseFloat(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 };
 
 const Pagamentos = () => {
@@ -48,6 +65,11 @@ const Pagamentos = () => {
     useEffect(() => {
         carregarPagamentos();
     }, [carregarPagamentos]);
+    
+    const getStatusClass = (status) => {
+        if (!status) return 'pending';
+        return status.toLowerCase(); 
+    };
 
     return (
         <div>
@@ -78,11 +100,14 @@ const Pagamentos = () => {
                                     <tr key={p.id}>
                                         <td>{p.contract_id}</td>
                                         <td>{p.property_name || 'N/A'}</td>
-                                        <td>{new Date(p.payment_date).toLocaleDateString('pt-BR')}</td>
+                                        
+                                        <td>{formatDate(p.due_date)}</td>
+                                        
                                         <td>{formatarMoeda(p.amount)}</td>
+                                        
                                         <td>
-                                            <span className={`status-pagamento status-${p.status}`}>
-                                                {p.status === 'paid' ? 'Pago' : p.status === 'pending' ? 'Pendente' : p.status === 'overdue' ? 'Atrasado' : 'Parcial'}
+                                            <span className={`status-pagamento status-${getStatusClass(p.status)}`}>
+                                                {translateStatus(p.status)}
                                             </span>
                                         </td>
                                         <td>
@@ -94,7 +119,9 @@ const Pagamentos = () => {
                                                 >
                                                     <IconeCheck style={{ width: '1rem', height: '1rem' }} />
                                                 </button>
-                                            ) : null}
+                                            ) : (
+                                                <IconeDinheiro style={{ width: '1.2rem', height: '1.2rem', color: 'var(--cor-sucesso)' }} title="Parcela Paga" />
+                                            )}
                                         </td>
                                     </tr>
                                 ))}

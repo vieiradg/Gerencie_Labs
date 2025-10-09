@@ -1,3 +1,7 @@
+/* ==================================== */
+/* === ESTILOS GERAIS E CARTÕES (Lista) === */
+/* ==================================== */
+
 .grid-cartoes-imoveis {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -32,7 +36,9 @@
     font-size: 0.875rem;
 }
 
-
+/* ==================================== */
+/* === ESTILOS DA PÁGINA DE DETALHES === */
+/* ==================================== */
 
 .detalhes-cabecalho {
     display: flex;
@@ -60,7 +66,7 @@
     background-color: var(--cor-erro-escura, #dc2626);
 }
 
-
+/* --- Navegação de Abas --- */
 .abas-navegacao {
     display: flex;
     gap: 1.5rem;
@@ -78,6 +84,11 @@
     border: none;
     font-family: var(--fonte-padrao);
     font-size: 1rem;
+    transition: color 0.2s, border-bottom-color 0.2s;
+}
+
+.aba-item:hover:not(.ativo) {
+    color: var(--cor-texto-escuro);
 }
 
 .aba-item.ativo {
@@ -85,7 +96,7 @@
     border-bottom-color: var(--cor-principal);
 }
 
-
+/* --- Layout do Contrato (e outras abas de duas colunas) --- */
 .contrato-layout {
     display: grid;
     grid-template-columns: 1fr;
@@ -102,7 +113,7 @@
 .texto-contrato h4 { margin-top: 1.5rem; margin-bottom: 0.5rem; }
 .texto-contrato p { line-height: 1.6; }
 
-
+/* --- Resumo do Contrato --- */
 
 .resumo-contrato-container .cartao h3 {
     margin-bottom: 1.5rem;
@@ -145,6 +156,7 @@
     margin-bottom: 1rem;
 }
 
+/* --- Placeholder --- */
 
 .placeholder-conteudo {
     background-color: white;
@@ -169,4 +181,173 @@
 
 .placeholder-conteudo p {
     color: var(--cor-texto-discreto);
+}
+
+/* ================================================= */
+/* === NOVOS ESTILOS PARA AS ABAS GEMINI (REAJUSTES/HISTÓRICO) === */
+/* ================================================= */
+
+.tab-container {
+    /* Garante que o conteúdo da aba se estenda */
+    padding: 0; 
+}
+
+/* --- Aba Reajustes --- */
+
+.reajuste-tab.cartao {
+    padding: 2rem;
+}
+
+.reajuste-tab .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.reajuste-tab textarea {
+    min-height: 80px;
+}
+
+.reajuste-tab .suggestion-result {
+    padding: 1.5rem;
+    border: 1px dashed var(--cor-borda);
+    border-radius: var(--borda-arredondada-grande);
+    margin-top: 2rem;
+}
+
+.reajuste-tab .notification-text-box {
+    background-color: var(--cor-fundo-clara);
+    padding: 1rem;
+    border-radius: var(--borda-arredondada);
+    white-space: pre-wrap;
+    font-family: monospace;
+    font-size: 0.9rem;
+    border: 1px solid var(--cor-borda);
+}
+
+@media (max-width: 768px) {
+    .reajuste-tab .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- Aba Histórico e Análise --- */
+
+.historico-tab .analysis-card {
+    /* Faz o card de análise se destacar um pouco mais */
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.analysis-card {
+    border-radius: var(--borda-arredondada-grande);
+    box-shadow: var(--sombra-pequena);
+    border: 1px solid;
+}
+
+.analysis-card h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.analysis-card .score-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.875rem;
+    background-color: rgba(255, 255, 255, 0.4); /* Fundo claro para o badge */
+}
+
+/* Estilos de Cores para Análise (Baseado no resultado do Gemini) */
+.analysis-card.status-excelente {
+    background-color: var(--cor-sucesso-clara, #e6ffe6);
+    border-color: var(--cor-sucesso, #10b981);
+    color: var(--cor-sucesso-escura, #065f46);
+}
+
+.analysis-card.status-razoavel {
+    background-color: var(--cor-aviso-clara, #fffbe6);
+    border-color: var(--cor-aviso, #f59e0b);
+    color: var(--cor-aviso-escura, #92400e);
+}
+
+.analysis-card.status-preocupante {
+    background-color: var(--cor-erro-clara, #ffe6e6);
+    border-color: var(--cor-erro, #ef4444);
+    color: var(--cor-erro-escura, #991b1b);
+}
+
+/* Estilo para Tabela do Histórico */
+.historico-tab .tabela {
+    width: 100%;
+    border-collapse: separate; 
+    border-spacing: 0;
+    overflow: hidden; 
+}
+
+.historico-tab .tabela thead th {
+    background-color: var(--cor-fundo-clara, #f9fafb);
+    font-weight: 600;
+    color: var(--cor-texto-escuro);
+    padding: 1rem;
+    text-align: left;
+}
+
+.historico-tab .tabela tbody tr:nth-child(odd) {
+    background-color: var(--cor-fundo-branca, #ffffff);
+}
+.historico-tab .tabela tbody tr:nth-child(even) {
+    background-color: var(--cor-fundo-clara, #f9fafb);
+}
+
+.historico-tab .tabela td {
+    padding: 1rem;
+    border-top: 1px solid var(--cor-borda);
+    color: var(--cor-texto-escuro);
+}
+
+/* Estilos de Status na Tabela */
+.status-cell {
+    font-weight: 500;
+}
+.status-pago, .status-em-dia { 
+    color: var(--cor-sucesso, #10b981);
+}
+.status-atrasado {
+    color: var(--cor-erro, #ef4444);
+}
+.status-pendente {
+    color: var(--cor-aviso, #f59e0b);
+}
+
+.campo-grupo textarea {
+    width: 100%;
+    padding: 0.75rem 1rem; /* Adiciona padding interno */
+    border: 1px solid var(--cor-borda); /* Borda consistente */
+    border-radius: var(--borda-arredondada); /* Arredonda as bordas */
+    background-color: white; /* Fundo branco */
+    color: var(--cor-texto-escuro); /* Cor do texto */
+    font-family: var(--fonte-padrao); /* Usa a fonte padrão */
+    font-size: 1rem; /* Tamanho da fonte */
+    transition: border-color 0.2s, box-shadow 0.2s; /* Transição suave ao focar */
+    resize: vertical; /* Permite redimensionar apenas verticalmente */
+    min-height: 80px; /* Garante uma altura mínima */
+}
+
+.campo-grupo textarea:focus {
+    border-color: var(--cor-principal); /* Borda azul ao focar */
+    box-shadow: 0 0 0 3px rgba(var(--rgb-principal), 0.1); /* Sombra suave ao focar */
+    outline: none; /* Remove o contorno padrão do navegador */
+}
+
+/* Garante que o placeholder também tenha uma cor discreta */
+.campo-grupo textarea::placeholder {
+    color: var(--cor-texto-discreto);
+    opacity: 1; /* Garante que o placeholder não seja transparente demais */
 }

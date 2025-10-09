@@ -32,11 +32,18 @@ const FormularioInquilino = ({ inquilino, fechar, onTenantAction, imoveis }) => 
     const [cpf, setCpf] = useState(formatarCpf(inquilino?.cpf));
     const [imovelId, setImovelId] = useState(inquilino?.property_id || "");
     const [erro, setErro] = useState({});
+    
+    // ESTADOS PARA CONTRATO
+    const [email, setEmail] = useState(inquilino?.email || "");
+    const [nationality, setNationality] = useState(inquilino?.nationality || "");
+    const [maritalStatus, setMaritalStatus] = useState(inquilino?.marital_status || "");
+    const [profession, setProfession] = useState(inquilino?.profession || "");
 
     const tenantSchema = z.object({
         name: z.string().min(1, "Nome é obrigatório").regex(/^\S+\s+\S+/, "Nome precisa ser completo (Nome e Sobrenome)"),
         cpf: z.string().length(14, "CPF incompleto").refine(value => !/^(\d)\1{10}$/.test(value.replace(/\D/g, '')), { message: "CPF inválido" }),
         phoneNumber: z.string().min(14, "Telefone incompleto"),
+        email: z.string().email("E-mail inválido").optional().or(z.literal('')),
     });
 
     const handleCpfChange = (e) => {
@@ -59,6 +66,11 @@ const FormularioInquilino = ({ inquilino, fechar, onTenantAction, imoveis }) => 
                 cpf: tenantData.cpf.replace(/\D/g, ''),
                 phone_number: tenantData.phoneNumber.replace(/\D/g, ''),
                 property_id: imovelId || null,
+                
+                email: email,
+                nationality: nationality,
+                marital_status: maritalStatus,
+                profession: profession,
             };
 
             if (isEditMode) {
@@ -76,13 +88,13 @@ const FormularioInquilino = ({ inquilino, fechar, onTenantAction, imoveis }) => 
             setErro({ api: mensagem });
             toast.error(mensagem);
         }
-    }, [inquilino, isEditMode, fechar, onTenantAction, imovelId]);
+    }, [inquilino, isEditMode, fechar, onTenantAction, imovelId, email, nationality, maritalStatus, profession]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         setErro({});
 
-        const formData = { name, phoneNumber, cpf };
+        const formData = { name, phoneNumber, cpf, email };
         const result = tenantSchema.safeParse(formData);
 
         if (!result.success) {
@@ -99,6 +111,7 @@ const FormularioInquilino = ({ inquilino, fechar, onTenantAction, imoveis }) => 
         <form className="formulario-modal" onSubmit={handleSubmit}>
             {erro.api && <p className="mensagem-erro">{erro.api}</p>}
 
+            {/* Nome e Imóvel (Mantidos) */}
             <div className="campo-grupo">
                 <label htmlFor="nome">Nome do Inquilino</label>
                 <input
@@ -127,6 +140,8 @@ const FormularioInquilino = ({ inquilino, fechar, onTenantAction, imoveis }) => 
                 </select>
             </div>
 
+            {/* Campos de Contato/Documento em Linhas Únicas (para maior espaçamento vertical e clean) */}
+            
             <div className="campo-grupo">
                 <label htmlFor="telefone">Telefone</label>
                 <input
@@ -139,7 +154,7 @@ const FormularioInquilino = ({ inquilino, fechar, onTenantAction, imoveis }) => 
                 />
                 {erro.phoneNumber && <p className="mensagem-erro">{erro.phoneNumber}</p>}
             </div>
-
+            
             <div className="campo-grupo">
                 <label htmlFor="cpf">CPF</label>
                 <input
@@ -153,6 +168,40 @@ const FormularioInquilino = ({ inquilino, fechar, onTenantAction, imoveis }) => 
                 {erro.cpf && <p className="mensagem-erro">{erro.cpf}</p>}
             </div>
 
+            <div className="campo-grupo">
+                <label htmlFor="email">E-mail</label>
+                <input
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="email@exemplo.com (Opcional)"
+                />
+                {erro.email && <p className="mensagem-erro">{erro.email}</p>}
+            </div>
+
+            <div className="campo-grupo">
+                <label htmlFor="maritalStatus">Estado Civil</label>
+                <input
+                    type="text"
+                    id="maritalStatus"
+                    value={maritalStatus}
+                    onChange={(e) => setMaritalStatus(e.target.value)}
+                    placeholder="Solteiro(a)"
+                />
+            </div>
+            
+            <div className="campo-grupo">
+                <label htmlFor="profession">Profissão</label>
+                <input
+                    type="text"
+                    id="profession"
+                    value={profession}
+                    onChange={(e) => setProfession(e.target.value)}
+                    placeholder="Engenheiro(a) Civil"
+                />
+            </div>
+            
             <div className="modal-rodape">
                 <button type="button" className="botao botao-contorno" onClick={fechar}>Cancelar</button>
                 <button type="submit" className="botao botao-principal">{isEditMode ? "Salvar Alterações" : "Salvar"}</button>
@@ -286,7 +335,7 @@ export default function Inquilinos() {
                         </thead>
                         <tbody>
                             {inquilinos.map((inquilino) => (
-                                <tr key={inquilino.id} onClick={() => abrirModalParaEditar(inquilino)} title="Clique para editar ou ver detalhes">
+                                <tr key={inquilino.id}>
                                     <td>{inquilino.name}</td>
                                     <td>{formatarTelefone(inquilino.phone_number)}</td>
                                     <td>{formatarCpf(inquilino.cpf)}</td>
